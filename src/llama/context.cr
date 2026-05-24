@@ -347,7 +347,7 @@ module Llama
       end
 
       # Use the internal generation method with a custom token sampler
-      generate_internal(prompt, max_tokens) do |logits|
+      generate_internal(prompt, max_tokens) do |_logits|
         begin
           # Sample the next token using the sampler chain
           token = sampler.sample(self)
@@ -539,7 +539,7 @@ module Llama
       pos = input_tokens.size
 
       # Generate up to max_tokens
-      max_tokens.times do |i|
+      max_tokens.times do
         begin
           # Create a batch with the current tokens
           batch = prepare_batch(all_tokens, pos, input_tokens)
@@ -693,10 +693,9 @@ module Llama
       LibLlama.llama_perf_context_reset(@handle)
     end
 
-    # Print a per-device memory breakdown via llama.cpp
-    # Useful for debugging memory usage. Outputs to STDERR via llama.cpp logger.
+    # NOTE: llama_memory_breakdown_print was removed in llama.cpp b9297.
     def print_memory_breakdown
-      LibLlama.llama_memory_breakdown_print(@handle)
+      raise Error.new("print_memory_breakdown is not supported on llama.cpp b9297+")
     end
 
     # Attaches a LoRA adapter to this context

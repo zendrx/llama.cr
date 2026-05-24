@@ -63,6 +63,12 @@ module Llama
       LibLlama.llama_sampler_accept(@handle, token)
     end
 
+    # Resets the internal state of the sampler chain.
+    # Useful when reusing the same chain for multiple independent generations.
+    def reset
+      LibLlama.llama_sampler_reset(@handle)
+    end
+
     # Frees the resources associated with this sampler chain
     def finalize
       @samplers.clear if @samplers

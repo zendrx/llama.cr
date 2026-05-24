@@ -25,14 +25,16 @@ abort "Error: Model path is required. Use -m or --model option.\nRun with --help
 Llama.log_level = Llama::LOG_LEVEL_ERROR
 
 # Initialize model, vocab, context, and sampler
-model = Llama::Model.new(model_path, n_gpu_layers: ngl) || abort "Error: Unable to load model"
+model = Llama::Model.new(model_path, n_gpu_layers: ngl)
 vocab = model.vocab
-context = model.context(n_ctx: n_ctx.to_u32, n_batch: n_ctx.to_u32) || abort "Error: Failed to create the context"
 
-sampler = Llama::SamplerChain.new
-sampler.add(Llama::Sampler::MinP.new(0.05, 1))
-sampler.add(Llama::Sampler::Temp.new(0.8))
-sampler.add(Llama::Sampler::Dist.new(Llama::DEFAULT_SEED))
+def build_sampler : Llama::SamplerChain
+  sampler = Llama::SamplerChain.new
+  sampler.add(Llama::Sampler::MinP.new(0.05, 1))
+  sampler.add(Llama::Sampler::Temp.new(0.8))
+  sampler.add(Llama::Sampler::Dist.new(Llama::DEFAULT_SEED))
+  sampler
+end
 
 tmpl = model.chat_template
 if tmpl.nil?
@@ -42,7 +44,6 @@ end
 
 # Generate response as an array of words/tokens
 def generate_words(context, vocab, sampler, prompt) : Array(String)
-  response = ""
   words = [] of String
   is_first = true
   prompt_tokens = vocab.tokenize(prompt, add_special: is_first, parse_special: true)
@@ -70,7 +71,6 @@ def generate_words(context, vocab, sampler, prompt) : Array(String)
     break if vocab.is_eog(new_token_id) || new_token_id == vocab.eos || new_token_id == vocab.eot
 
     piece = vocab.token_to_piece(new_token_id, 0, true)
-    response += piece
     # Split by whitespace, punctuation, and newlines (supports English and Japanese)
     piece.split(/([。、！？\n\s]+)/).each do |w|
       words << w unless w.empty?
@@ -85,7 +85,7 @@ def generate_words(context, vocab, sampler, prompt) : Array(String)
 end
 
 # Serve the chat UI (SPA)
-get "/" do |env|
+get "/" do |_env|
   <<-HTML
   <!DOCTYPE html>
   <html lang="en">
@@ -279,7 +279,13 @@ end
 
 # Chat API endpoint
 post "/api/chat" do |env|
-  req = JSON.parse(env.request.body.not_nil!)
+  body = env.request.body
+  if body.nil?
+    env.response.status_code = 400
+    next({error: "Request body is required"}.to_json)
+  end
+
+  req = JSON.parse(body.gets_to_end)
   messages = [] of Llama::ChatMessage
   if req["history"]?
     req["history"].as_a.each do |msg|
@@ -292,9 +298,10 @@ post "/api/chat" do |env|
       end
     end
   end
-  local_context = model.context(n_ctx: n_ctx.to_u32, n_batch: n_ctx.to_u32) || abort "Error: Failed to create the context"
+  local_context = model.context(n_ctx: n_ctx.to_u32, n_batch: n_ctx.to_u32)
+  local_sampler = build_sampler
   prompt = local_context.apply_chat_template(messages, true, tmpl)
-  words = generate_words(local_context, vocab, sampler, prompt)
+  words = generate_words(local_context, vocab, local_sampler, prompt)
   {words: words}.to_json
 end
 

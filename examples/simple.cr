@@ -68,18 +68,10 @@ sampler = Llama::SamplerChain.new(no_perf: false)
 # Add a greedy sampler to the chain
 sampler.add(Llama::Sampler::Greedy.new)
 
-# Print the prompt token-by-token
-prompt_tokens.each do |token|
-  piece = vocab.token_to_piece(token, 0, true)
-  print piece
-end
-
-# Use the high-level generate method instead of manual batch processing
-response = context.generate("", max_tokens: n_predict, temperature: 0.0)
-print response
-
 t_start = Time.monotonic
-elapsed = Time.monotonic - t_start
+print prompt
+response = context.generate_with_sampler(prompt, sampler, n_predict)
+print response
 n_decode = n_predict
 
 puts

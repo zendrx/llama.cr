@@ -74,9 +74,9 @@ This document outlines the development guidelines for the llama.cr project, prim
 
 ### Version Mapping Rules
 
-- `shard.yml` version must use the numeric build value (example: `8119`).
-- Release tags must use `v<build>` format (example: `v8119`).
-- When referenced in documentation or scripts, the build is prefixed with `b` (example: `b8119`).
+- `shard.yml` version must use the numeric build value (example: `9297`).
+- Release tags must use `v<build>` format (example: `v9297`).
+- When referenced in documentation or scripts, the build is prefixed with `b` (example: `b9297`).
 
 ### Version Update Process
 

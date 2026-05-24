@@ -230,12 +230,6 @@ module Llama
       SAMPLING_MIROSTAT_ETA
     end
 
-    enum LlamaParamsFitStatus
-      SUCCESS = 0
-      FAILURE = 1
-      ERROR   = 2
-    end
-
     struct LlamaModelKvOverride
       tag : LlamaModelKvOverrideType
       key : LibC::Char[128]
@@ -367,7 +361,6 @@ module Llama
     fun llama_context_default_params : LlamaContextParams
     fun llama_sampler_chain_default_params : LlamaSamplerChainParams
     fun llama_flash_attn_type_name(type : LlamaFlashAttnType) : LibC::Char*
-    fun llama_params_fit(path_model : LibC::Char*, mparams : LlamaModelParams*, cparams : LlamaContextParams*, tensor_split : Float32*, tensor_buft_overrides : LlamaModelTensorBuftOverride*, margins : LibC::SizeT*, n_ctx_min : UInt32, log_level : Int32) : LlamaParamsFitStatus
 
     # Initialization and Finalization
     fun llama_backend_init : Void
@@ -571,7 +564,6 @@ module Llama
     # Define the callback type for logging
     alias GgmlLogCallback = Proc(Int32, LibC::Char*, Void*, Void)
     fun llama_log_set(log_callback : GgmlLogCallback, user_data : Void*) : Void
-    fun llama_memory_breakdown_print(ctx : LlamaContext*) : Void
     fun llama_batch_get_one(tokens : LlamaToken*, n_tokens : Int32) : LlamaBatch
     fun llama_batch_init(n_tokens : Int32, embd : Int32, n_seq_max : Int32) : LlamaBatch
     fun llama_batch_free(batch : LlamaBatch) : Void
