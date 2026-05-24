@@ -59,7 +59,7 @@ describe Llama::State do
       context.decode(batch)
 
       # Get the state data
-      data = state.get_data
+      data = state.data
       data.should_not be_empty
 
       # Create a new context
@@ -67,7 +67,7 @@ describe Llama::State do
       new_state = new_context.state
 
       # Set the state data
-      bytes_read = new_state.set_data(data)
+      bytes_read = (new_state.data = data)
       bytes_read.should eq(data.size)
     end
   end

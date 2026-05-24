@@ -255,7 +255,7 @@ module Llama
 
       begin
         # Use custom function to create a batch with memory allocated
-        handle, has_crystal_token = self.crystal_llama_batch_get_one(tokens.to_unsafe, tokens.size, n_seq_max)
+        handle, has_crystal_token = crystal_llama_batch_get_one(tokens.to_unsafe, tokens.size, n_seq_max)
         # If has_crystal_token=true then owned: true, otherwise owned: false
         batch = Batch.new(handle, owned: has_crystal_token)
         # Set the flag indicating that this batch has Crystal-allocated token memory

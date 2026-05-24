@@ -3,12 +3,10 @@ require "option_parser"
 
 # Helper function to read prompt from a file
 def read_prompt_from_file(filepath : String) : String
-  begin
-    File.read(filepath)
-  rescue ex
-    STDERR.puts "#{__FILE__}: could not open file '#{filepath}' for reading: #{ex.message}"
-    exit(1)
-  end
+  File.read(filepath)
+rescue ex
+  STDERR.puts "#{__FILE__}: could not open file '#{filepath}' for reading: #{ex.message}"
+  exit(1)
 end
 
 # Parse command line arguments
@@ -18,9 +16,9 @@ no_escape = false
 no_parse_special = false
 disable_logging = false
 show_token_count = false
-model_path = nil
-prompt_path = nil
-prompt_arg = nil
+model_path = ""
+prompt_path = ""
+prompt_arg = ""
 stdin_set = false
 
 # Track which arguments were explicitly given
@@ -86,7 +84,7 @@ OptionParser.parse do |parser|
 end
 
 # Sanity check the command line arguments
-if !model_path_set || model_path.nil?
+if !model_path_set || model_path.empty?
   STDERR.puts "Error: must specify --model."
   exit(1)
 end
@@ -104,9 +102,9 @@ end
 
 # Figure out where the prompt will come from
 prompt = ""
-if prompt_path_set && !prompt_path.nil?
-  prompt = read_prompt_from_file(prompt_path.not_nil!)
-elsif prompt_set && !prompt_arg.nil?
+if prompt_path_set
+  prompt = read_prompt_from_file(prompt_path)
+elsif prompt_set
   prompt = prompt_arg
 else
   # We'll read stdin after loading the model
@@ -119,16 +117,13 @@ end
 
 begin
   # Load the model with vocab_only=true
-  model = Llama::Model.new(model_path.not_nil!, vocab_only: true)
+  model = Llama::Model.new(model_path, vocab_only: true)
 rescue ex
   STDERR.puts "Error: could not load model from file '#{model_path}': #{ex.message}"
   exit(1)
 end
 
 vocab = model.vocab
-
-# Create a minimal context (needed for token_to_piece)
-ctx = model.context
 
 # Read entire prompt from stdin?
 if stdin_set
@@ -142,7 +137,7 @@ end
 
 # Process escape sequences if needed
 if !no_escape
-  prompt = Llama.process_escapes(prompt.not_nil!)
+  prompt = Llama.process_escapes(prompt)
 end
 
 # Tokenize the prompt
@@ -151,7 +146,7 @@ add_bos = model_wants_add_bos && !no_bos
 parse_special = !no_parse_special
 
 begin
-  tokens = vocab.tokenize(prompt.not_nil!, add_bos, parse_special)
+  tokens = vocab.tokenize(prompt, add_bos, parse_special)
 rescue ex
   STDERR.puts "Error: failed to tokenize prompt: #{ex.message}"
   exit(1)
@@ -169,7 +164,7 @@ else
   tokens.each do |token|
     begin
       puts vocab.format_token(token)
-    rescue ex
+    rescue
       puts "#{token} -> (utf-8 decode failure)"
     end
   end

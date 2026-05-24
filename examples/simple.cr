@@ -14,16 +14,16 @@ OptionParser.parse do |parser|
     model_path = path
   end
 
-  parser.on("-n N", "--n-predict=N", "Number of tokens to predict (default: 32)") do |n|
-    n_predict = n.to_i
+  parser.on("-n N", "--n-predict=N", "Number of tokens to predict (default: 32)") do |count|
+    n_predict = count.to_i
   end
 
-  parser.on("-g N", "--n-gpu-layers=N", "Number of layers to offload to GPU (default: 99)") do |n|
-    ngl = n.to_i
+  parser.on("-g N", "--n-gpu-layers=N", "Number of layers to offload to GPU (default: 99)") do |layers|
+    ngl = layers.to_i
   end
 
-  parser.on("--ngl=N", "Alias for --n-gpu-layers") do |n|
-    ngl = n.to_i
+  parser.on("--ngl=N", "Alias for --n-gpu-layers") do |layers|
+    ngl = layers.to_i
   end
 
   parser.on("-h", "--help", "Show this help") do

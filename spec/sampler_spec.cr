@@ -46,9 +46,9 @@ describe Llama::Sampler::Base do
     infill.should_not be_nil
 
     # Grammar Lazy Patterns sampler
-    grammar = %q{
-        root ::= "test"
-      }
+    grammar = <<-GRAMMAR
+      root ::= "test"
+      GRAMMAR
     trigger_patterns = ["JSON:"]
     grammar_lazy = Llama::Sampler::GrammarLazyPatterns.new(
       vocab, grammar, "root", trigger_patterns

@@ -15,12 +15,12 @@ OptionParser.parse do |parser|
     model_path = path
   end
 
-  parser.on("-c", "--context N", "Context size (default: 2048)") do |n|
-    n_ctx = n.to_i
+  parser.on("-c", "--context N", "Context size (default: 2048)") do |context_size|
+    n_ctx = context_size.to_i
   end
 
-  parser.on("-g", "--gpu-layers N", "Number of layers to offload to GPU (default: 99)") do |n|
-    ngl = n.to_i
+  parser.on("-g", "--gpu-layers N", "Number of layers to offload to GPU (default: 99)") do |layers|
+    ngl = layers.to_i
   end
 
   parser.on("-h", "--help", "Show this help") do
@@ -75,7 +75,7 @@ def generate(context, vocab, sampler, prompt) : String
     end
 
     new_token_id = sampler.sample(context)
-    break if vocab.is_eog(new_token_id) || new_token_id == vocab.eos || new_token_id == vocab.eot
+    break if vocab.eog?(new_token_id) || new_token_id == vocab.eos || new_token_id == vocab.eot
 
     piece = vocab.token_to_piece(new_token_id, 0, true)
     print piece

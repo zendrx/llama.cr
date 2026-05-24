@@ -14,9 +14,9 @@ OptionParser.parse do |parser|
   parser.banner = "Usage: #{PROGRAM_NAME} -m MODEL [-c context_size] [-ngl n_gpu_layers] [-p port]"
 
   parser.on("-m", "--model MODEL", "Path to the model file (required)") { |path| model_path = path }
-  parser.on("-c", "--context N", "Context size (default: 2048)") { |n| n_ctx = n.to_i }
-  parser.on("-g", "--gpu-layers N", "Number of layers to offload to GPU (default: 99)") { |n| ngl = n.to_i }
-  parser.on("-p", "--port PORT", "Port to run the server on (default: 3000)") { |n| port = n.to_i }
+  parser.on("-c", "--context N", "Context size (default: 2048)") { |context_size| n_ctx = context_size.to_i }
+  parser.on("-g", "--gpu-layers N", "Number of layers to offload to GPU (default: 99)") { |layers| ngl = layers.to_i }
+  parser.on("-p", "--port PORT", "Port to run the server on (default: 3000)") { |port_value| port = port_value.to_i }
   parser.on("-h", "--help", "Show this help") { puts parser; exit }
 end
 
@@ -68,12 +68,12 @@ def generate_words(context, vocab, sampler, prompt) : Array(String)
     end
 
     new_token_id = sampler.sample(context)
-    break if vocab.is_eog(new_token_id) || new_token_id == vocab.eos || new_token_id == vocab.eot
+    break if vocab.eog?(new_token_id) || new_token_id == vocab.eos || new_token_id == vocab.eot
 
     piece = vocab.token_to_piece(new_token_id, 0, true)
     # Split by whitespace, punctuation, and newlines (supports English and Japanese)
-    piece.split(/([。、！？\n\s]+)/).each do |w|
-      words << w unless w.empty?
+    piece.split(/([。、！？\n\s]+)/).each do |fragment|
+      words << fragment unless fragment.empty?
     end
 
     batch = Llama::Batch.get_one([new_token_id])
@@ -86,6 +86,7 @@ end
 
 # Serve the chat UI (SPA)
 get "/" do |_env|
+  # ameba:disable Style/HeredocIndent
   <<-HTML
   <!DOCTYPE html>
   <html lang="en">
@@ -275,6 +276,7 @@ get "/" do |_env|
   </body>
   </html>
   HTML
+  # ameba:enable Style/HeredocIndent
 end
 
 # Chat API endpoint

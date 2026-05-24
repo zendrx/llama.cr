@@ -6,9 +6,9 @@ prompt = "Hello my name is"
 max_tokens = 100
 
 OptionParser.parse do |parser|
-  parser.on("-m", "--model=MODEL", "Path to the model file") { |m| model_path = m }
-  parser.on("-p", "--prompt=PROMPT", "Prompt text") { |p| prompt = p }
-  parser.on("-n", "--max-tokens=N", "Number of tokens to generate") { |n| max_tokens = n.to_i }
+  parser.on("-m", "--model=MODEL", "Path to the model file") { |path| model_path = path }
+  parser.on("-p", "--prompt=PROMPT", "Prompt text") { |text| prompt = text }
+  parser.on("-n", "--max-tokens=N", "Number of tokens to generate") { |count| max_tokens = count.to_i }
   parser.on("-h", "--help", "Show this help") { puts parser; exit }
 end
 

@@ -591,81 +591,83 @@ module Llama
     # Raises:
     # - Llama::Sampler::Error if sampling fails
     private def sample_token(logits : Pointer(Float32), temperature : Float32) : Int32
-      begin
-        if temperature <= 0.0
-          # Greedy sampling - just pick the most likely token
-          max_logit = -Float32::INFINITY
-          best_token = 0
+      sample_token_impl(logits, temperature)
+    rescue ex : Sampler::Error
+      raise ex
+    rescue ex
+      error_msg = Llama.format_error(
+        "Token sampling failed",
+        -9, # Sampling error
+        "temperature: #{temperature}, error: #{ex.message}"
+      )
+      raise Sampler::Error.new(error_msg)
+    end
 
-          n_vocab = @model.vocab.n_tokens
-          n_vocab.times do |i|
-            if logits[i] > max_logit
-              max_logit = logits[i]
-              best_token = i
-            end
+    private def sample_token_impl(logits : Pointer(Float32), temperature : Float32) : Int32
+      if temperature <= 0.0
+        # Greedy sampling - just pick the most likely token
+        max_logit = -Float32::INFINITY
+        best_token = 0
+
+        n_vocab = @model.vocab.n_tokens
+        n_vocab.times do |i|
+          if logits[i] > max_logit
+            max_logit = logits[i]
+            best_token = i
           end
-
-          best_token
-        else
-          # Temperature sampling
-          # Apply temperature to logits
-          n_vocab = @model.vocab.n_tokens
-          probs = Array(Float32).new(n_vocab, 0.0)
-
-          # Apply temperature and convert to probabilities
-          max_logit = -Float32::INFINITY
-          n_vocab.times do |i|
-            logits[i] /= temperature
-            if logits[i] > max_logit
-              max_logit = logits[i]
-            end
-          end
-
-          # Compute softmax
-          sum = 0.0_f32
-          n_vocab.times do |i|
-            probs[i] = Math.exp(logits[i] - max_logit)
-            sum += probs[i]
-          end
-
-          if sum <= 0.0
-            error_msg = Llama.format_error(
-              "Softmax computation failed",
-              -9, # Sampling error
-              "sum of probabilities is zero or negative"
-            )
-            raise Sampler::Error.new(error_msg)
-          end
-
-          n_vocab.times do |i|
-            probs[i] /= sum
-          end
-
-          # Sample from the distribution
-          r = rand
-          cdf = 0.0_f32
-          token = n_vocab - 1 # Default to last token
-
-          n_vocab.times do |i|
-            cdf += probs[i]
-            if r < cdf
-              token = i
-              break
-            end
-          end
-
-          token
         end
-      rescue ex : Sampler::Error
-        raise ex
-      rescue ex
+
+        return best_token
+      end
+
+      # Temperature sampling
+      # Apply temperature to logits
+      n_vocab = @model.vocab.n_tokens
+      probs = Array(Float32).new(n_vocab, 0.0)
+
+      # Apply temperature and convert to probabilities
+      max_logit = -Float32::INFINITY
+      n_vocab.times do |i|
+        logits[i] /= temperature
+        if logits[i] > max_logit
+          max_logit = logits[i]
+        end
+      end
+
+      # Compute softmax
+      sum = 0.0_f32
+      n_vocab.times do |i|
+        probs[i] = Math.exp(logits[i] - max_logit)
+        sum += probs[i]
+      end
+
+      if sum <= 0.0
         error_msg = Llama.format_error(
-          "Token sampling failed",
+          "Softmax computation failed",
           -9, # Sampling error
-          "temperature: #{temperature}, error: #{ex.message}"
+          "sum of probabilities is zero or negative"
         )
         raise Sampler::Error.new(error_msg)
       end
+
+      n_vocab.times do |i|
+        probs[i] /= sum
+      end
+
+      # Sample from the distribution
+      r = rand
+      cdf = 0.0_f32
+      token = n_vocab - 1 # Default to last token
+
+      n_vocab.times do |i|
+        cdf += probs[i]
+        if r < cdf
+          token = i
+          break
+        end
+      end
+
+      token
     end
 
     # Returns the raw pointer to the underlying llama_context structure
@@ -815,7 +817,7 @@ module Llama
     #
     # Parameters:
     # - enabled: Whether to enable embeddings mode
-    def set_embeddings(enabled : Bool)
+    def embeddings=(enabled : Bool)
       LibLlama.llama_set_embeddings(@handle, enabled)
     end
 
@@ -836,7 +838,7 @@ module Llama
     #
     # Raises:
     # - Llama::Context::Error if embeddings mode is not enabled
-    def get_embeddings : Array(Float32)?
+    def embeddings : Array(Float32)?
       get_embeddings_ith(-1)
     end
 
@@ -852,7 +854,7 @@ module Llama
     # - Llama::Context::Error if embeddings mode is not enabled
     def get_embeddings_ith(i : Int32) : Array(Float32)?
       ptr = LibLlama.llama_get_embeddings_ith(@handle, i)
-      return nil if ptr.null?
+      return if ptr.null?
 
       # Get the embedding dimension from the model
       n_embd = @model.n_embd
@@ -878,7 +880,7 @@ module Llama
     # - Llama::Context::Error if embeddings mode is not enabled
     def get_embeddings_seq(seq_id : Int32) : Array(Float32)?
       ptr = LibLlama.llama_get_embeddings_seq(@handle, seq_id)
-      return nil if ptr.null?
+      return if ptr.null?
 
       # Get the embedding dimension from the model
       n_embd = @model.n_embd

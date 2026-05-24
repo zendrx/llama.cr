@@ -39,17 +39,15 @@ module Llama
     # Returns:
     # - self for method chaining
     def clear(data : Bool = false) : self
-      begin
-        LibLlama.llama_memory_clear(@handle, data)
-        self
-      rescue ex
-        error_msg = Llama.format_error(
-          "Failed to clear memory",
-          -7, # Memory error
-          ex.message
-        )
-        raise Memory::Error.new(error_msg)
-      end
+      LibLlama.llama_memory_clear(@handle, data)
+      self
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to clear memory",
+        -7, # Memory error
+        ex.message
+      )
+      raise Memory::Error.new(error_msg)
     end
 
     # Remove tokens from sequence in specified position range
@@ -64,16 +62,14 @@ module Llama
     #
     # Note: Removing a whole sequence never fails
     def seq_rm(seq_id : Int32, p0 : Int32, p1 : Int32) : Bool
-      begin
-        LibLlama.llama_memory_seq_rm(@handle, seq_id, p0, p1)
-      rescue ex
-        error_msg = Llama.format_error(
-          "Failed to remove sequence from memory",
-          -7, # Memory error
-          "seq_id: #{seq_id}, p0: #{p0}, p1: #{p1}, error: #{ex.message}"
-        )
-        raise Memory::Error.new(error_msg)
-      end
+      LibLlama.llama_memory_seq_rm(@handle, seq_id, p0, p1)
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to remove sequence from memory",
+        -7, # Memory error
+        "seq_id: #{seq_id}, p0: #{p0}, p1: #{p1}, error: #{ex.message}"
+      )
+      raise Memory::Error.new(error_msg)
     end
 
     # Copy tokens from one sequence to another
@@ -87,17 +83,15 @@ module Llama
     # Returns:
     # - self for method chaining
     def seq_cp(seq_id_src : Int32, seq_id_dst : Int32, p0 : Int32, p1 : Int32) : self
-      begin
-        LibLlama.llama_memory_seq_cp(@handle, seq_id_src, seq_id_dst, p0, p1)
-        self
-      rescue ex
-        error_msg = Llama.format_error(
-          "Failed to copy sequence in memory",
-          -7, # Memory error
-          "seq_id_src: #{seq_id_src}, seq_id_dst: #{seq_id_dst}, p0: #{p0}, p1: #{p1}, error: #{ex.message}"
-        )
-        raise Memory::Error.new(error_msg)
-      end
+      LibLlama.llama_memory_seq_cp(@handle, seq_id_src, seq_id_dst, p0, p1)
+      self
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to copy sequence in memory",
+        -7, # Memory error
+        "seq_id_src: #{seq_id_src}, seq_id_dst: #{seq_id_dst}, p0: #{p0}, p1: #{p1}, error: #{ex.message}"
+      )
+      raise Memory::Error.new(error_msg)
     end
 
     # Keep only specified sequence, remove all others
@@ -108,17 +102,15 @@ module Llama
     # Returns:
     # - self for method chaining
     def seq_keep(seq_id : Int32) : self
-      begin
-        LibLlama.llama_memory_seq_keep(@handle, seq_id)
-        self
-      rescue ex
-        error_msg = Llama.format_error(
-          "Failed to keep sequence in memory",
-          -7, # Memory error
-          "seq_id: #{seq_id}, error: #{ex.message}"
-        )
-        raise Memory::Error.new(error_msg)
-      end
+      LibLlama.llama_memory_seq_keep(@handle, seq_id)
+      self
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to keep sequence in memory",
+        -7, # Memory error
+        "seq_id: #{seq_id}, error: #{ex.message}"
+      )
+      raise Memory::Error.new(error_msg)
     end
 
     # Add relative position delta to tokens in sequence
@@ -132,17 +124,15 @@ module Llama
     # Returns:
     # - self for method chaining
     def seq_add(seq_id : Int32, p0 : Int32, p1 : Int32, delta : Int32) : self
-      begin
-        LibLlama.llama_memory_seq_add(@handle, seq_id, p0, p1, delta)
-        self
-      rescue ex
-        error_msg = Llama.format_error(
-          "Failed to add position delta to sequence in memory",
-          -7, # Memory error
-          "seq_id: #{seq_id}, p0: #{p0}, p1: #{p1}, delta: #{delta}, error: #{ex.message}"
-        )
-        raise Memory::Error.new(error_msg)
-      end
+      LibLlama.llama_memory_seq_add(@handle, seq_id, p0, p1, delta)
+      self
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to add position delta to sequence in memory",
+        -7, # Memory error
+        "seq_id: #{seq_id}, p0: #{p0}, p1: #{p1}, delta: #{delta}, error: #{ex.message}"
+      )
+      raise Memory::Error.new(error_msg)
     end
 
     # Divide positions of tokens in sequence by factor
@@ -187,16 +177,14 @@ module Llama
     # Returns:
     # - Minimum position, or -1 if sequence is empty
     def seq_pos_min(seq_id : Int32) : Int32
-      begin
-        LibLlama.llama_memory_seq_pos_min(@handle, seq_id)
-      rescue ex
-        error_msg = Llama.format_error(
-          "Failed to get minimum position in sequence",
-          -7, # Memory error
-          "seq_id: #{seq_id}, error: #{ex.message}"
-        )
-        raise Memory::Error.new(error_msg)
-      end
+      LibLlama.llama_memory_seq_pos_min(@handle, seq_id)
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to get minimum position in sequence",
+        -7, # Memory error
+        "seq_id: #{seq_id}, error: #{ex.message}"
+      )
+      raise Memory::Error.new(error_msg)
     end
 
     # Get maximum position in sequence
@@ -209,16 +197,14 @@ module Llama
     # Returns:
     # - Maximum position, or -1 if sequence is empty
     def seq_pos_max(seq_id : Int32) : Int32
-      begin
-        LibLlama.llama_memory_seq_pos_max(@handle, seq_id)
-      rescue ex
-        error_msg = Llama.format_error(
-          "Failed to get maximum position in sequence",
-          -7, # Memory error
-          "seq_id: #{seq_id}, error: #{ex.message}"
-        )
-        raise Memory::Error.new(error_msg)
-      end
+      LibLlama.llama_memory_seq_pos_max(@handle, seq_id)
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to get maximum position in sequence",
+        -7, # Memory error
+        "seq_id: #{seq_id}, error: #{ex.message}"
+      )
+      raise Memory::Error.new(error_msg)
     end
 
     # Check if memory supports shifting
@@ -226,16 +212,14 @@ module Llama
     # Returns:
     # - true if shifting is supported, false otherwise
     def can_shift? : Bool
-      begin
-        LibLlama.llama_memory_can_shift(@handle)
-      rescue ex
-        error_msg = Llama.format_error(
-          "Failed to check if memory supports shifting",
-          -7, # Memory error
-          ex.message
-        )
-        raise Memory::Error.new(error_msg)
-      end
+      LibLlama.llama_memory_can_shift(@handle)
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to check if memory supports shifting",
+        -7, # Memory error
+        ex.message
+      )
+      raise Memory::Error.new(error_msg)
     end
 
     # Get raw pointer for internal use

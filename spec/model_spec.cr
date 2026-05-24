@@ -103,8 +103,10 @@ describe "Llama with model" do
       key.should be_a(String)
       value.should be_a(String)
       # Check value by key
-      value_by_key = model.metadata_value(key.not_nil!)
-      value_by_key.should eq(value)
+      unless key.nil? || value.nil?
+        value_by_key = model.metadata_value(key)
+        value_by_key.should eq(value)
+      end
       puts "  - First metadata key: #{key}"
       puts "  - First metadata value: #{value}"
     end

@@ -48,29 +48,27 @@ module Llama
     # Raises:
     # - Llama::State::Error if the operation fails
     def size : LibC::SizeT
-      begin
-        result = LibLlama.llama_state_get_size(ctx_ptr)
+      result = LibLlama.llama_state_get_size(ctx_ptr)
 
-        if result == 0
-          error_msg = Llama.format_error(
-            "Failed to get state size",
-            -8, # State management error
-            "returned size is 0"
-          )
-          raise State::Error.new(error_msg)
-        end
-
-        result
-      rescue ex : State::Error
-        raise ex
-      rescue ex
+      if result == 0
         error_msg = Llama.format_error(
           "Failed to get state size",
           -8, # State management error
-          ex.message
+          "returned size is 0"
         )
         raise State::Error.new(error_msg)
       end
+
+      result
+    rescue ex : State::Error
+      raise ex
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to get state size",
+        -8, # State management error
+        ex.message
+      )
+      raise State::Error.new(error_msg)
     end
 
     # Gets the current state data
@@ -80,38 +78,36 @@ module Llama
     #
     # Raises:
     # - Llama::State::Error if the operation fails
-    def get_data : Bytes
-      begin
-        # Get the size needed
-        state_size = size
+    def data : Bytes
+      # Get the size needed
+      state_size = size
 
-        # Allocate a buffer
-        buffer = Bytes.new(state_size)
+      # Allocate a buffer
+      buffer = Bytes.new(state_size)
 
-        # Get the state data
-        bytes_copied = LibLlama.llama_state_get_data(ctx_ptr, buffer.to_unsafe, state_size)
+      # Get the state data
+      bytes_copied = LibLlama.llama_state_get_data(ctx_ptr, buffer.to_unsafe, state_size)
 
-        if bytes_copied == 0
-          error_msg = Llama.format_error(
-            "Failed to get state data",
-            -8, # State management error
-            "no bytes were copied"
-          )
-          raise State::Error.new(error_msg)
-        end
-
-        # Return the buffer (potentially truncated if bytes_copied < state_size)
-        buffer[0, bytes_copied]
-      rescue ex : State::Error
-        raise ex
-      rescue ex
+      if bytes_copied == 0
         error_msg = Llama.format_error(
           "Failed to get state data",
           -8, # State management error
-          ex.message
+          "no bytes were copied"
         )
         raise State::Error.new(error_msg)
       end
+
+      # Return the buffer (potentially truncated if bytes_copied < state_size)
+      buffer[0, bytes_copied]
+    rescue ex : State::Error
+      raise ex
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to get state data",
+        -8, # State management error
+        ex.message
+      )
+      raise State::Error.new(error_msg)
     end
 
     # Sets the state from data
@@ -125,7 +121,7 @@ module Llama
     # Raises:
     # - ArgumentError if data is empty
     # - Llama::State::Error if the operation fails
-    def set_data(data : Bytes) : LibC::SizeT
+    def data=(data : Bytes) : LibC::SizeT
       if data.empty?
         raise ArgumentError.new("State data cannot be empty")
       end
@@ -284,33 +280,31 @@ module Llama
     # Raises:
     # - Llama::State::Error if the operation fails
     def seq_size(seq_id : Int32, flags : LibLlama::LlamaStateSeqFlags = 0_u32) : LibC::SizeT
-      begin
-        result = if flags == 0
-                   LibLlama.llama_state_seq_get_size(ctx_ptr, seq_id)
-                 else
-                   LibLlama.llama_state_seq_get_size_ext(ctx_ptr, seq_id, flags)
-                 end
+      result = if flags == 0
+                 LibLlama.llama_state_seq_get_size(ctx_ptr, seq_id)
+               else
+                 LibLlama.llama_state_seq_get_size_ext(ctx_ptr, seq_id, flags)
+               end
 
-        if result == 0
-          error_msg = Llama.format_error(
-            "Failed to get sequence state size",
-            -8, # State management error
-            "seq_id: #{seq_id}, returned size is 0"
-          )
-          raise State::Error.new(error_msg)
-        end
-
-        result
-      rescue ex : State::Error
-        raise ex
-      rescue ex
+      if result == 0
         error_msg = Llama.format_error(
           "Failed to get sequence state size",
           -8, # State management error
-          "seq_id: #{seq_id}, error: #{ex.message}"
+          "seq_id: #{seq_id}, returned size is 0"
         )
         raise State::Error.new(error_msg)
       end
+
+      result
+    rescue ex : State::Error
+      raise ex
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to get sequence state size",
+        -8, # State management error
+        "seq_id: #{seq_id}, error: #{ex.message}"
+      )
+      raise State::Error.new(error_msg)
     end
 
     # Gets the state data for a specific sequence
@@ -327,52 +321,50 @@ module Llama
     # Raises:
     # - Llama::State::Error if the operation fails
     def seq_get_data(seq_id : Int32, flags : LibLlama::LlamaStateSeqFlags = 0_u32) : Bytes
-      begin
-        # Get the size needed
-        state_size = seq_size(seq_id, flags)
+      # Get the size needed
+      state_size = seq_size(seq_id, flags)
 
-        # Allocate a buffer
-        buffer = Bytes.new(state_size)
+      # Allocate a buffer
+      buffer = Bytes.new(state_size)
 
-        # Get the state data
-        bytes_copied = if flags == 0
-                         LibLlama.llama_state_seq_get_data(
-                           ctx_ptr,
-                           buffer.to_unsafe,
-                           state_size,
-                           seq_id
-                         )
-                       else
-                         LibLlama.llama_state_seq_get_data_ext(
-                           ctx_ptr,
-                           buffer.to_unsafe,
-                           state_size,
-                           seq_id,
-                           flags
-                         )
-                       end
+      # Get the state data
+      bytes_copied = if flags == 0
+                       LibLlama.llama_state_seq_get_data(
+                         ctx_ptr,
+                         buffer.to_unsafe,
+                         state_size,
+                         seq_id
+                       )
+                     else
+                       LibLlama.llama_state_seq_get_data_ext(
+                         ctx_ptr,
+                         buffer.to_unsafe,
+                         state_size,
+                         seq_id,
+                         flags
+                       )
+                     end
 
-        if bytes_copied == 0
-          error_msg = Llama.format_error(
-            "Failed to get sequence state data",
-            -8, # State management error
-            "seq_id: #{seq_id}, no bytes were copied"
-          )
-          raise State::Error.new(error_msg)
-        end
-
-        # Return the buffer (potentially truncated if bytes_copied < state_size)
-        buffer[0, bytes_copied]
-      rescue ex : State::Error
-        raise ex
-      rescue ex
+      if bytes_copied == 0
         error_msg = Llama.format_error(
           "Failed to get sequence state data",
           -8, # State management error
-          "seq_id: #{seq_id}, error: #{ex.message}"
+          "seq_id: #{seq_id}, no bytes were copied"
         )
         raise State::Error.new(error_msg)
       end
+
+      # Return the buffer (potentially truncated if bytes_copied < state_size)
+      buffer[0, bytes_copied]
+    rescue ex : State::Error
+      raise ex
+    rescue ex
+      error_msg = Llama.format_error(
+        "Failed to get sequence state data",
+        -8, # State management error
+        "seq_id: #{seq_id}, error: #{ex.message}"
+      )
+      raise State::Error.new(error_msg)
     end
 
     # Sets the state for a specific sequence from data

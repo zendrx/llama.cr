@@ -144,7 +144,7 @@ describe Llama::Context do
       # Deterministic generations (temperature=0.0) should be identical
       begin
         deterministic1.should eq(deterministic2)
-      rescue ex
+      rescue
         puts "  - Warning: Deterministic generations were not identical"
         puts "  - First: '#{deterministic1}'"
         puts "  - Second: '#{deterministic2}'"

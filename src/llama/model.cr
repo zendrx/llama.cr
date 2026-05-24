@@ -51,10 +51,7 @@ module Llama
     # - The chat template string, or nil if not available
     def chat_template(name : String? = nil) : String?
       ptr = LibLlama.llama_model_chat_template(@handle, name.nil? ? nil : name.to_unsafe)
-      if ptr.null?
-        # No error, just no template available
-        return nil
-      end
+      return if ptr.null? # No error, just no template available
       String.new(ptr)
     end
 

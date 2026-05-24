@@ -165,12 +165,12 @@ module Llama
     end
 
     # Checks if a token is an end-of-generation token
-    def is_eog(token : Int32) : Bool
+    def eog?(token : Int32) : Bool
       LibLlama.llama_vocab_is_eog(@handle, token)
     end
 
     # Checks if a token is a control token
-    def is_control(token : Int32) : Bool
+    def control?(token : Int32) : Bool
       LibLlama.llama_vocab_is_control(@handle, token)
     end
 

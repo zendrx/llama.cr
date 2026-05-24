@@ -238,7 +238,7 @@ module Llama
     if ids_only
       "[" + tokens.map(&.to_s).join(", ") + "]"
     else
-      tokens.map { |t| vocab.format_token(t) }.join("\n")
+      tokens.map { |token| vocab.format_token(token) }.join("\n")
     end
   end
 
