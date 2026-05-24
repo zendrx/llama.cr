@@ -18,6 +18,10 @@ module Llama
       # Ensure llama backend is initialized
       Llama.init
 
+      # Keep the associated model alive while this adapter exists.
+      # llama.cpp requires adapter lifetime to be within model lifetime.
+      @model = model
+
       @handle = LibLlama.llama_adapter_lora_init(model.to_unsafe, path)
 
       if @handle.null?
@@ -56,5 +60,6 @@ module Llama
     end
 
     @handle : LibLlama::LlamaAdapterLora*
+    @model : Model
   end
 end
