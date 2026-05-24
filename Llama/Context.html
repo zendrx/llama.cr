@@ -354,14 +354,14 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L5" target="_blank">
+      <a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L5" target="_blank">
         llama/context.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context/error.cr#L4" target="_blank">
+      <a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context/error.cr#L4" target="_blank">
         llama/context/error.cr
       </a>
     
@@ -458,6 +458,20 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#embeddings%3AArray%28Float32%29%7CNil-instance-method" class="signature"><strong>#embeddings</strong> : Array(Float32) | Nil</a>
+        
+          <div class="summary"><p>Gets embeddings for the latest output token.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#embeddings%3D%28enabled%3ABool%29-instance-method" class="signature"><strong>#embeddings=</strong>(enabled : Bool)</a>
+        
+          <div class="summary"><p>Sets whether the model is in embeddings mode or not If true, embeddings will be returned but logits will not</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#encode%28batch%3ALibLlama%3A%3ALlamaBatch%7CBatch%29%3AInt32-instance-method" class="signature"><strong>#encode</strong>(batch : LibLlama::LlamaBatch | Batch) : Int32</a>
         
           <div class="summary"><p>Processes a batch of tokens with the encoder part of the model</p></div>
@@ -482,13 +496,6 @@
         <a href="#generate_with_sampler%28prompt%3AString%2Csampler%3ASamplerChain%2Cmax_tokens%3AInt32%3D128%29%3AString-instance-method" class="signature"><strong>#generate_with_sampler</strong>(prompt : String, sampler : SamplerChain, max_tokens : Int32 = <span class="n">128</span>) : String</a>
         
           <div class="summary"><p>Generates text using a sampler chain</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#get_embeddings%3AArray%28Float32%29%7CNil-instance-method" class="signature"><strong>#get_embeddings</strong> : Array(Float32) | Nil</a>
-        
-          <div class="summary"><p>Gets embeddings for the latest output token.</p></div>
         
       </li>
     
@@ -626,13 +633,6 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#set_embeddings%28enabled%3ABool%29-instance-method" class="signature"><strong>#set_embeddings</strong>(enabled : Bool)</a>
-        
-          <div class="summary"><p>Sets whether the model is in embeddings mode or not If true, embeddings will be returned but logits will not</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#state%3AState-instance-method" class="signature"><strong>#state</strong> : State</a>
         
           <div class="summary"><p>Returns the state manager for this context Lazily initializes the state if it doesn't exist yet</p></div>
@@ -720,7 +720,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L19" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L19" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -772,7 +772,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L798" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L800" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -803,7 +803,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L904" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L906" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -837,7 +837,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L712" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L714" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -875,7 +875,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L162" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L162" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -896,7 +896,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L769" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L771" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -931,7 +931,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L412" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L412" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -964,7 +964,63 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L746" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L748" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="embeddings:Array(Float32)|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>embeddings</strong> : Array(Float32) | Nil
+
+        <a class="method-permalink" href="#embeddings%3AArray%28Float32%29%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Gets embeddings for the latest output token.</p>
+<p>Internally this uses the index-based embeddings API.</p>
+<p>Returns:</p>
+<ul>
+<li>An array of embeddings, or nil if embeddings are not available</li>
+</ul>
+<p>Raises:</p>
+<ul>
+<li>Llama::Context::Error if embeddings mode is not enabled</li>
+</ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L841" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="embeddings=(enabled:Bool)-instance-method">
+      <div class="signature">
+        
+        def <strong>embeddings=</strong>(enabled : Bool)
+
+        <a class="method-permalink" href="#embeddings%3D%28enabled%3ABool%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Sets whether the model is in embeddings mode or not
+If true, embeddings will be returned but logits will not</p>
+<p>Parameters:</p>
+<ul>
+<li>enabled: Whether to enable embeddings mode</li>
+</ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L820" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1000,7 +1056,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L384" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L384" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1021,7 +1077,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L677" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L679" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1058,7 +1114,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L473" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L473" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1096,37 +1152,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L343" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="get_embeddings:Array(Float32)|Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>get_embeddings</strong> : Array(Float32) | Nil
-
-        <a class="method-permalink" href="#get_embeddings%3AArray%28Float32%29%7CNil-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Gets embeddings for the latest output token.</p>
-<p>Internally this uses the index-based embeddings API.</p>
-<p>Returns:</p>
-<ul>
-<li>An array of embeddings, or nil if embeddings are not available</li>
-</ul>
-<p>Raises:</p>
-<ul>
-<li>Llama::Context::Error if embeddings mode is not enabled</li>
-</ul>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L839" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L343" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1159,7 +1185,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L853" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L855" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1192,7 +1218,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L879" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L881" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1217,7 +1243,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L444" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L444" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1246,7 +1272,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L435" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L435" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1278,7 +1304,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L90" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L90" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1299,7 +1325,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L105" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L105" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1320,7 +1346,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L95" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L95" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1341,7 +1367,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L100" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L100" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1362,7 +1388,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L115" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L115" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1383,7 +1409,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L120" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L120" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1404,7 +1430,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L125" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L125" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1425,7 +1451,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L110" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L110" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1450,7 +1476,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L826" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L828" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1471,7 +1497,7 @@ before generating text with the decoder.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L697" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L699" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1494,7 +1520,7 @@ It's useful for debugging and performance analysis.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L685" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L687" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1529,7 +1555,7 @@ It's useful for debugging and performance analysis.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L293" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L293" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1564,7 +1590,7 @@ It's useful for debugging and performance analysis.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L243" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L243" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1600,7 +1626,7 @@ It's useful for debugging and performance analysis.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L222" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L222" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1622,33 +1648,7 @@ It's useful for debugging and performance analysis.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L692" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="set_embeddings(enabled:Bool)-instance-method">
-      <div class="signature">
-        
-        def <strong>set_embeddings</strong>(enabled : Bool)
-
-        <a class="method-permalink" href="#set_embeddings%28enabled%3ABool%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Sets whether the model is in embeddings mode or not
-If true, embeddings will be returned but logits will not</p>
-<p>Parameters:</p>
-<ul>
-<li>enabled: Whether to enable embeddings mode</li>
-</ul>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L818" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L694" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1670,7 +1670,7 @@ Lazily initializes the state if it doesn't exist yet</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L131" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L131" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1691,7 +1691,7 @@ Lazily initializes the state if it doesn't exist yet</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/11435b30ad84b0d8e6ca1f3dfa2db6fb64346819/src/llama/context.cr#L672" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/c11c631033c086ef12fbae0dd8091b540a2d5a39/src/llama/context.cr#L674" target="_blank">View source</a>]
         
       </div>
     </div>
