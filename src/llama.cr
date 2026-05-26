@@ -78,8 +78,15 @@ require "./llama/context"
 require "./llama/sampler"
 
 module Llama
-  VERSION                      = {{ `shards version #{__DIR__}`.chomp.stringify }}
-  LLAMA_CPP_COMPATIBLE_VERSION = "b#{VERSION}"
+  VERSION = {{ `shards version #{__DIR__}`.chomp.stringify }}
+  LLAMA_CPP_BUILD = begin
+    if match = VERSION.match(/^0\.(\d+)\.0$/)
+      match[1]
+    else
+      VERSION
+    end
+  end
+  LLAMA_CPP_COMPATIBLE_VERSION = "b#{LLAMA_CPP_BUILD}"
 
   # ==== Native constants (wrapped for user convenience) ====
   DEFAULT_SEED    = LibLlama::LLAMA_DEFAULT_SEED

@@ -50,7 +50,12 @@ jobs:
         id: set_version
         run: |
           VERSION=$(cd "$GITHUB_WORKSPACE" && shards version)
-          LLAMA_VERSION="b${VERSION}"
+          if [[ ! "$VERSION" =~ ^0\.([0-9]+)\.0$ ]]; then
+            echo "Invalid shard version format: $VERSION (expected 0.<build>.0)"
+            exit 1
+          fi
+          BUILD="${BASH_REMATCH[1]}"
+          LLAMA_VERSION="b${BUILD}"
           echo "LLAMA_VERSION=${LLAMA_VERSION}" >> $GITHUB_ENV
 
       - name: Install llama.cpp

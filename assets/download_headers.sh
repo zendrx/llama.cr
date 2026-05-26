@@ -3,7 +3,12 @@
 
 # Get version information from shards
 VERSION=$(cd "$(dirname "$0")/.." && shards version)
-LLAMA_BUILD="b${VERSION}"
+if [[ "$VERSION" =~ ^0\.([0-9]+)\.0$ ]]; then
+	BUILD="${BASH_REMATCH[1]}"
+else
+	BUILD="$VERSION"
+fi
+LLAMA_BUILD="b${BUILD}"
 
 echo "Downloading llama.cpp headers version ${LLAMA_BUILD}..."
 

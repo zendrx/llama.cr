@@ -74,16 +74,16 @@ This document outlines the development guidelines for the llama.cr project, prim
 
 ### Version Mapping Rules
 
-- `shard.yml` version must use the numeric build value (example: `<build>`).
-- Release tags must use `v<build>` format (example: `v<build>`).
+- `shard.yml` version must use `0.<build>.0` format (example: `0.9330.0`).
+- Release tags must match the shard version with `v` prefix (example: `v0.9330.0`).
 - When referenced in documentation or scripts, the build is prefixed with `b` (example: `b<build>`).
 
 ### Version Update Process
 
 Document which version of llama.cpp the library is compatible with. When updating to support a new llama.cpp version:
 
-1. Update `version` in `shard.yml` to the matching numeric build
-2. Create/update release tag as `v<build>`
+1. Update `version` in `shard.yml` to `0.<build>.0`
+2. Create/update release tag as `v0.<build>.0`
 3. Run `assets/download_headers.sh` to download the new header files
 4. Update `src/llama/lib_llama.cr` bindings (struct/enum/function signatures)
 5. Update wrapper code under `src/llama/` when API behavior changes (especially LoRA-related paths)

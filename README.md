@@ -15,10 +15,10 @@ This project is under active development and may change rapidly.
 ## Versioning Policy
 
 - This library version tracks the upstream `llama.cpp` build number.
-- The version in `shard.yml` uses the numeric build value (for example `<build>`).
-- Git tags use the `v<build>` format (for example `v<build>`).
+- The version in `shard.yml` uses `0.<build>.0` (for example `0.9330.0`).
+- Git tags follow the shard version (for example `v0.9330.0`).
 - Compatibility target is one upstream build at a time.
-- Consumers should pin an exact shard version (for example `<build>`), not a version range.
+- Consumers should pin an exact shard version (for example `0.<build>.0`), not a version range.
 
 ## Features
 
@@ -40,7 +40,9 @@ You need the llama.cpp shared library (libllama) available on your system.
 #### 1. Download Prebuilt Binary (Recommended)
 
 ```sh
-LLAMA_BUILD="b$(shards version)"
+VERSION="$(shards version)"
+BUILD="$(echo "$VERSION" | sed -E 's/^0\.([0-9]+)\.0$/\1/')"
+LLAMA_BUILD="b${BUILD}"
 curl -L "https://github.com/ggml-org/llama.cpp/releases/download/${LLAMA_BUILD}/llama-${LLAMA_BUILD}-bin-ubuntu-x64.tar.gz" -o llama.tar.gz
 tar -xzf llama.tar.gz
 sudo cp llama-${LLAMA_BUILD}/*.so* /usr/local/lib/
@@ -95,7 +97,9 @@ DYLD_LIBRARY_PATH="$LLAMA_LIB_DIR" ./simple --model models/tiny_model.gguf
 ```bash
 git clone https://github.com/ggml-org/llama.cpp.git
 cd llama.cpp
-LLAMA_BUILD="b$(shards version ..)"
+VERSION="$(shards version ..)"
+BUILD="$(echo "$VERSION" | sed -E 's/^0\.([0-9]+)\.0$/\1/')"
+LLAMA_BUILD="b${BUILD}"
 git checkout "${LLAMA_BUILD}"
 mkdir build && cd build
 cmake .. && cmake --build . --config Release
@@ -124,7 +128,7 @@ We strongly recommend pinning an exact version because llama.cpp updates can inc
 dependencies:
   llama:
     github: kojix2/llama.cr
-    version: <build>
+    version: 0.<build>.0
 ```
 
 Then run `shards install`.
