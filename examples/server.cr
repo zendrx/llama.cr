@@ -86,7 +86,6 @@ end
 
 # Serve the chat UI (SPA)
 get "/" do |_env|
-  # ameba:disable Style/HeredocIndent
   <<-HTML
   <!DOCTYPE html>
   <html lang="en">
@@ -276,7 +275,6 @@ get "/" do |_env|
   </body>
   </html>
   HTML
-  # ameba:enable Style/HeredocIndent
 end
 
 # Chat API endpoint
