@@ -78,7 +78,7 @@ require "./llama/context"
 require "./llama/sampler"
 
 module Llama
-  VERSION = {{ `shards version #{__DIR__}`.chomp.stringify }}
+  VERSION         = {{ `shards version #{__DIR__}`.chomp.stringify }}
   LLAMA_CPP_BUILD = begin
     if match = VERSION.match(/^0\.(\d+)\.0$/)
       match[1]
@@ -201,14 +201,14 @@ module Llama
   # Returns:
   # - A new string with escape sequences processed
   def self.process_escapes(text : String) : String
-    text.gsub(/\\([nrt\\"])/) do |match|
-      case match[1]
+    text.gsub(/\\([nrt\\"])/) do |escape_match|
+      case escape_match[1]
       when 'n'  then "\n"
       when 'r'  then "\r"
       when 't'  then "\t"
       when '\\' then "\\"
       when '"'  then "\""
-      else           match
+      else           escape_match
       end
     end
   end
