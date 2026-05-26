@@ -323,10 +323,10 @@
 </a>Versioning Policy</h2>
 <ul>
 <li>This library version tracks the upstream <code>llama.cpp</code> build number.</li>
-<li>The version in <code>shard.yml</code> uses the numeric build value (for example <code>&lt;build&gt;</code>).</li>
-<li>Git tags use the <code>v&lt;build&gt;</code> format (for example <code>v&lt;build&gt;</code>).</li>
+<li>The version in <code>shard.yml</code> uses <code>0.&lt;build&gt;.0</code> (for example <code>0.9330.0</code>).</li>
+<li>Git tags follow the shard version (for example <code>v0.9330.0</code>).</li>
 <li>Compatibility target is one upstream build at a time.</li>
-<li>Consumers should pin an exact shard version (for example <code>&lt;build&gt;</code>), not a version range.</li>
+<li>Consumers should pin an exact shard version (for example <code>0.&lt;build&gt;.0</code>), not a version range.</li>
 </ul>
 <h2><a id="features" class="anchor" href="#features">
   <svg class="octicon-link" aria-hidden="true">
@@ -359,7 +359,9 @@
     <use href="#octicon-link"/>
   </svg>
 </a>1. Download Prebuilt Binary (Recommended)</h4>
-<pre><code class="language-sh">LLAMA_BUILD=&quot;b$(shards version)&quot;
+<pre><code class="language-sh">VERSION=&quot;$(shards version)&quot;
+BUILD=&quot;$(echo &quot;$VERSION&quot; | sed -E 's/^0\.([0-9]+)\.0$/\1/')&quot;
+LLAMA_BUILD=&quot;b${BUILD}&quot;
 curl -L &quot;https://github.com/ggml-org/llama.cpp/releases/download/${LLAMA_BUILD}/llama-${LLAMA_BUILD}-bin-ubuntu-x64.tar.gz&quot; -o llama.tar.gz
 tar -xzf llama.tar.gz
 sudo cp llama-${LLAMA_BUILD}/*.so* /usr/local/lib/
@@ -391,7 +393,9 @@ DYLD_LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; ./simple --model models/tiny_model.
 <summary>Build from source (advanced users)</summary>
 <pre><code class="language-bash">git clone https://github.com/ggml-org/llama.cpp.git
 cd llama.cpp
-LLAMA_BUILD=&quot;b$(shards version ..)&quot;
+VERSION=&quot;$(shards version ..)&quot;
+BUILD=&quot;$(echo &quot;$VERSION&quot; | sed -E 's/^0\.([0-9]+)\.0$/\1/')&quot;
+LLAMA_BUILD=&quot;b${BUILD}&quot;
 git checkout &quot;${LLAMA_BUILD}&quot;
 mkdir build &amp;&amp; cd build
 cmake .. &amp;&amp; cmake --build . --config Release
@@ -419,7 +423,7 @@ sudo cmake --install . &amp;&amp; sudo ldconfig</code></pre>
 <pre><code class="language-yaml">dependencies:
   llama:
     github: kojix2/llama.cr
-    version: &lt;build&gt;</code></pre>
+    version: 0.&lt;build&gt;.0</code></pre>
 <p>Then run <code>shards install</code>.</p>
 <h2><a id="usage" class="anchor" href="#usage">
   <svg class="octicon-link" aria-hidden="true">
