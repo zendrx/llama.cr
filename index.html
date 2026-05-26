@@ -323,10 +323,10 @@
 </a>Versioning Policy</h2>
 <ul>
 <li>This library version tracks the upstream <code>llama.cpp</code> build number.</li>
-<li>The version in <code>shard.yml</code> uses the numeric build value (for example <code>9297</code>).</li>
-<li>Git tags use the <code>v&lt;build&gt;</code> format (for example <code>v9297</code>).</li>
+<li>The version in <code>shard.yml</code> uses the numeric build value (for example <code>&lt;build&gt;</code>).</li>
+<li>Git tags use the <code>v&lt;build&gt;</code> format (for example <code>v&lt;build&gt;</code>).</li>
 <li>Compatibility target is one upstream build at a time.</li>
-<li>Consumers should pin an exact shard version (for example <code>9297</code>), not a version range.</li>
+<li>Consumers should pin an exact shard version (for example <code>&lt;build&gt;</code>), not a version range.</li>
 </ul>
 <h2><a id="features" class="anchor" href="#features">
   <svg class="octicon-link" aria-hidden="true">
@@ -419,7 +419,7 @@ sudo cmake --install . &amp;&amp; sudo ldconfig</code></pre>
 <pre><code class="language-yaml">dependencies:
   llama:
     github: kojix2/llama.cr
-    version: 9297</code></pre>
+    version: &lt;build&gt;</code></pre>
 <p>Then run <code>shards install</code>.</p>
 <h2><a id="usage" class="anchor" href="#usage">
   <svg class="octicon-link" aria-hidden="true">
