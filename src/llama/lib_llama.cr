@@ -202,6 +202,11 @@ module Llama
       ENABLED  =  1
     end
 
+    enum LlamaContextType
+      DEFAULT = 0
+      MTP     = 1
+    end
+
     enum LlamaSplitMode
       NONE  = 0
       LAYER = 1
@@ -327,8 +332,10 @@ module Llama
       n_batch : UInt32
       n_ubatch : UInt32
       n_seq_max : UInt32
+      n_rs_seq : UInt32
       n_threads : Int32
       n_threads_batch : Int32
+      ctx_type : LlamaContextType
       rope_scaling_type : LlamaRopeScalingType
       pooling_type : LlamaPoolingType
       attention_type : LlamaAttentionType
