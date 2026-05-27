@@ -9,12 +9,10 @@ module Llama
     # Parameters:
     # - ctx: The Context to manage state for
     #
-    # To avoid circular references, we store the context pointer rather than the context object
-    #
     # Raises:
     # - Llama::State::Error if the context pointer is null
-    def initialize(ctx : Context)
-      @ctx_ptr = ctx.to_unsafe
+    def initialize(@ctx : Context)
+      @ctx_ptr = @ctx.to_unsafe
 
       if @ctx_ptr.null?
         error_msg = Llama.format_error(
@@ -551,6 +549,7 @@ module Llama
     end
 
     @ctx_ptr : LibLlama::LlamaContext*
+    @ctx : Context
 
     # :nodoc:
     def clone

@@ -19,8 +19,8 @@ module Llama
     #
     # Raises:
     # - Memory::Error if memory handle cannot be obtained
-    def initialize(ctx : Context)
-      @handle = LibLlama.llama_get_memory(ctx.to_unsafe)
+    def initialize(@ctx : Context)
+      @handle = LibLlama.llama_get_memory(@ctx.to_unsafe)
       if @handle.null?
         error_msg = Llama.format_error(
           "Failed to get memory handle",
@@ -231,6 +231,7 @@ module Llama
     end
 
     @handle : LibLlama::LlamaMemoryT
+    @ctx : Context
 
     # :nodoc:
     def clone
