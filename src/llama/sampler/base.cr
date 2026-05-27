@@ -23,6 +23,10 @@ module Llama
         @owned_by_chain = v
       end
 
+      protected def owned_by_chain? : Bool
+        @owned_by_chain
+      end
+
       # :nodoc:
       # Sets the handle to a new pointer.
       # This is used when a sampler is removed from a chain and needs to be

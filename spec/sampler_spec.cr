@@ -92,6 +92,18 @@ describe Llama::SamplerChain do
     # If we get here without errors, the test passes
   end
 
+  it "rejects adding a sampler already owned by a chain" do
+    chain = Llama::SamplerChain.new
+    chain2 = Llama::SamplerChain.new
+    sampler = Llama::Sampler::TopK.new(40)
+
+    chain.add(sampler)
+
+    expect_raises(Llama::Error, "Sampler is already owned by a sampler chain") do
+      chain2.add(sampler)
+    end
+  end
+
   it "can remove samplers from the chain and restore ownership" do
     chain = Llama::SamplerChain.new
     k = Llama::Sampler::TopK.new(40)

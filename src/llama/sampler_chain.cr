@@ -22,6 +22,10 @@ module Llama
     # Parameters:
     # - sampler: The sampler to add to the chain
     def add(sampler : Sampler::Base)
+      if sampler.owned_by_chain?
+        raise Error.new("Sampler is already owned by a sampler chain")
+      end
+
       LibLlama.llama_sampler_chain_add(@handle, sampler.to_unsafe)
       sampler.set_owned_by_chain(true)
       # Ownership is transferred to the C side; do not free sampler separately.
