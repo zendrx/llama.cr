@@ -44,21 +44,20 @@ module Llama
         trigger_patterns : Array(String) = [] of String,
         trigger_tokens : Array(Int32) = [] of Int32,
       )
-        # Convert trigger patterns to C-style array
-        patterns_ptr = Pointer(LibC::Char*).malloc(trigger_patterns.size + 1)
-        trigger_patterns.each_with_index do |pattern, i|
-          patterns_ptr[i] = pattern.to_unsafe
-        end
-        patterns_ptr[trigger_patterns.size] = Pointer(LibC::Char).null
+        # Store references before passing pointers to the C initializer.
+        owned_trigger_patterns = trigger_patterns.dup
+        owned_trigger_tokens = trigger_tokens.dup
+        trigger_pattern_ptrs = owned_trigger_patterns.map(&.to_unsafe)
 
-        # Convert trigger tokens to C-style array
-        tokens_ptr = Pointer(LibLlama::LlamaToken).null
-        if trigger_tokens.size > 0
-          tokens_ptr = Pointer(LibLlama::LlamaToken).malloc(trigger_tokens.size)
-          trigger_tokens.each_with_index do |token, i|
-            tokens_ptr[i] = token
-          end
-        end
+        @vocab = vocab
+        @grammar_str = grammar_str
+        @grammar_root = grammar_root
+        @trigger_patterns = owned_trigger_patterns
+        @trigger_tokens = owned_trigger_tokens
+        @trigger_pattern_ptrs = trigger_pattern_ptrs
+
+        patterns_ptr = trigger_pattern_ptrs.empty? ? Pointer(LibC::Char*).null : trigger_pattern_ptrs.to_unsafe
+        tokens_ptr = owned_trigger_tokens.empty? ? Pointer(LibLlama::LlamaToken).null : owned_trigger_tokens.to_unsafe
 
         handle = LibLlama.llama_sampler_init_grammar_lazy_patterns(
           vocab.to_unsafe,
@@ -71,12 +70,6 @@ module Llama
         )
         raise Error.new("Failed to create Grammar Lazy Patterns sampler") if handle.null?
         super(handle)
-        # Store references to prevent GC
-        @vocab = vocab
-        @grammar_str = grammar_str
-        @grammar_root = grammar_root
-        @trigger_patterns = trigger_patterns
-        @trigger_tokens = trigger_tokens
       end
 
       # Overrides the parent class's finalize method to ensure proper cleanup
@@ -87,6 +80,7 @@ module Llama
         @grammar_root = nil
         @trigger_patterns = nil
         @trigger_tokens = nil
+        @trigger_pattern_ptrs = nil
 
         # Then call the parent's finalize method
         super
@@ -98,6 +92,7 @@ module Llama
       @grammar_root : String?
       @trigger_patterns : Array(String)?
       @trigger_tokens : Array(Int32)?
+      @trigger_pattern_ptrs : Array(LibC::Char*)?
     end
   end
 end

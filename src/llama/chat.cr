@@ -44,38 +44,38 @@ module Llama
     # Convert messages to C structures
     c_messages = messages.map(&.to_unsafe)
 
-    # Estimate buffer size
-    estimated_size = messages.sum { |msg| msg.content.size + msg.role.size } * 2
-    buffer = Pointer(LibC::Char).malloc(estimated_size)
+    tmpl = template || ""
 
-    # Apply template
-    result = LibLlama.llama_chat_apply_template(
-      (template || "").to_unsafe,
+    # First call: get required buffer size
+    required_size = LibLlama.llama_chat_apply_template(
+      tmpl.to_unsafe,
+      c_messages.to_unsafe,
+      messages.size,
+      add_assistant,
+      nil,
+      0
+    )
+
+    # Check for errors
+    raise Error.new("Failed to apply chat template") if required_size < 0
+
+    # Second call: allocate buffer and get the result
+    buffer = Pointer(LibC::Char).malloc(required_size)
+    written = LibLlama.llama_chat_apply_template(
+      tmpl.to_unsafe,
       c_messages.to_unsafe,
       messages.size,
       add_assistant,
       buffer,
-      estimated_size
+      required_size
     )
 
-    # Retry with larger buffer if needed
-    if result > estimated_size
-      buffer = Pointer(LibC::Char).malloc(result)
-      result = LibLlama.llama_chat_apply_template(
-        (template || "").to_unsafe,
-        c_messages.to_unsafe,
-        messages.size,
-        add_assistant,
-        buffer,
-        result
-      )
-    end
-
     # Check for errors
-    raise Error.new("Failed to apply chat template") if result < 0
+    raise Error.new("Failed to apply chat template") if written < 0
+    raise Error.new("Chat template output exceeded allocated buffer") if written > required_size
 
     # Convert result to string
-    String.new(buffer, result)
+    String.new(buffer, written)
   end
 
   # Gets the list of built-in chat templates

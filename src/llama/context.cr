@@ -910,31 +910,7 @@ module Llama
     # - The formatted prompt string.
     def apply_chat_template(messages : Array(ChatMessage), add_assistant : Bool = true, template : String? = nil) : String
       tmpl = template || @model.chat_template || ""
-      c_messages = messages.map(&.to_unsafe)
-      # First call: get required buffer size
-      new_len = LibLlama.llama_chat_apply_template(
-        tmpl.to_unsafe,
-        c_messages.to_unsafe,
-        messages.size,
-        add_assistant,
-        nil,
-        0
-      )
-      raise "llama_chat_apply_template failed to get buffer size" if new_len < 0
-
-      # Second call: allocate buffer and get the result
-      buffer = Pointer(LibC::Char).malloc(new_len)
-      written = LibLlama.llama_chat_apply_template(
-        tmpl.to_unsafe,
-        c_messages.to_unsafe,
-        messages.size,
-        add_assistant,
-        buffer,
-        new_len
-      )
-      raise "llama_chat_apply_template failed to write buffer" if written < 0
-
-      String.new(buffer, written)
+      Llama.apply_chat_template(tmpl, messages, add_assistant)
     end
 
     @handle : LibLlama::LlamaContext*
