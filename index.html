@@ -316,18 +316,6 @@
 <p>Crystal bindings for <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a>, a C/C++ implementation of LLaMA, Falcon, GPT-2, and other large language models.</p>
 <p>The version in <code>shard.yml</code> corresponds to the compatible llama.cpp build number.</p>
 <p>This project is under active development and may change rapidly.</p>
-<h2><a id="versioning-policy" class="anchor" href="#versioning-policy">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>Versioning Policy</h2>
-<ul>
-<li>This library version tracks the upstream <code>llama.cpp</code> build number.</li>
-<li>The version in <code>shard.yml</code> uses <code>0.&lt;build&gt;.0</code> (for example <code>0.9330.0</code>).</li>
-<li>Git tags follow the shard version (for example <code>v0.9330.0</code>).</li>
-<li>Compatibility target is one upstream build at a time.</li>
-<li>Consumers should pin an exact shard version (for example <code>0.&lt;build&gt;.0</code>), not a version range.</li>
-</ul>
 <h2><a id="features" class="anchor" href="#features">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -348,17 +336,16 @@
     <use href="#octicon-link"/>
   </svg>
 </a>Installation</h2>
-<h3><a id="prerequisites" class="anchor" href="#prerequisites">
+<p>Install <code>llama.cpp</code> first, then add this shard.</p>
+<h3><a id="1.-install-llama.cpp" class="anchor" href="#1.-install-llama.cpp">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
-</a>Prerequisites</h3>
-<p>You need the llama.cpp shared library (libllama) available on your system.</p>
-<h4><a id="1.-download-prebuilt-binary-recommended" class="anchor" href="#1.-download-prebuilt-binary-recommended">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>1. Download Prebuilt Binary (Recommended)</h4>
+</a>1. Install llama.cpp</h3>
+<p>macOS (Homebrew)</p>
+<pre><code class="language-sh">brew install llama.cpp
+export LLAMA_LIB_DIR=&quot;$(brew --prefix llama.cpp)/lib&quot;</code></pre>
+<p>Linux (prebuilt release matching this shard version)</p>
 <pre><code class="language-sh">VERSION=&quot;$(shards version)&quot;
 BUILD=&quot;$(echo &quot;$VERSION&quot; | sed -E 's/^0\.([0-9]+)\.0$/\1/')&quot;
 LLAMA_BUILD=&quot;b${BUILD}&quot;
@@ -366,32 +353,40 @@ curl -L &quot;https://github.com/ggml-org/llama.cpp/releases/download/${LLAMA_BU
 tar -xzf llama.tar.gz
 sudo cp llama-${LLAMA_BUILD}/*.so* /usr/local/lib/
 sudo ldconfig</code></pre>
-<p>For macOS, replace <code>ubuntu-x64</code> with <code>macos-arm64</code> and <code>*.so</code> with <code>*.dylib</code>.</p>
-<p><strong>Alternative: Use local libraries with standard linker flags</strong></p>
-<p>If you prefer not to install system-wide, point Crystal and the runtime loader to your local llama.cpp library directory:</p>
-<pre><code class="language-sh">export LLAMA_LIB_DIR=/path/to/llama.cpp
-LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; crystal build examples/simple.cr --link-flags &quot;-L$LLAMA_LIB_DIR -Wl,-rpath,$LLAMA_LIB_DIR -lllama -lggml&quot;
+<h3><a id="2.-add-to-your-project" class="anchor" href="#2.-add-to-your-project">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>2. Add to your project</h3>
+<pre><code class="language-yaml">dependencies:
+  llama:
+    github: kojix2/llama.cr
+    version: 0.&lt;build&gt;.0</code></pre>
+<p>Then run:</p>
+<pre><code class="language-sh">shards install</code></pre>
+<p>Pin an exact version because llama.cpp updates can include breaking changes between build numbers.</p>
+<h3><a id="3.-build-and-run" class="anchor" href="#3.-build-and-run">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>3. Build and run</h3>
+<p>Linux:</p>
+<pre><code class="language-sh">export LLAMA_LIB_DIR=/path/to/llama.cpp/lib
+LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; crystal build examples/simple.cr \
+  --link-flags &quot;-L$LLAMA_LIB_DIR -Wl,-rpath,$LLAMA_LIB_DIR -lllama -lggml&quot;
 LD_LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; ./simple --model models/tiny_model.gguf</code></pre>
-<p>On macOS, replace <code>LD_LIBRARY_PATH</code> with <code>DYLD_LIBRARY_PATH</code>.</p>
-<p>If backend auto-detection fails in newer llama.cpp builds, also set <code>GGML_BACKEND_PATH</code> to a backend shared library file (not a directory), for example:</p>
-<pre><code class="language-sh">export GGML_BACKEND_PATH=&quot;$LLAMA_LIB_DIR/libggml-cpu-haswell.so&quot;</code></pre>
-<p>For local development/tests, a full example is:</p>
-<pre><code class="language-sh">MODEL_PATH=/path/to/model.gguf \
-LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; \
-LD_LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; \
-GGML_BACKEND_PATH=&quot;$LLAMA_LIB_DIR/libggml-cpu-haswell.so&quot; \
-crystal spec</code></pre>
-<p>Minimal examples:</p>
-<pre><code class="language-sh"># Linux
-LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; crystal build examples/simple.cr --link-flags &quot;-L$LLAMA_LIB_DIR -Wl,-rpath,$LLAMA_LIB_DIR -lllama -lggml&quot;
-LD_LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; ./simple --model models/tiny_model.gguf
-
-# macOS
-LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; crystal build examples/simple.cr --link-flags &quot;-L$LLAMA_LIB_DIR -Wl,-rpath,$LLAMA_LIB_DIR -lllama -lggml&quot;
+<p>macOS:</p>
+<pre><code class="language-sh">export LLAMA_LIB_DIR=/path/to/llama.cpp/lib
+LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; crystal build examples/simple.cr \
+  --link-flags &quot;-L$LLAMA_LIB_DIR -Wl,-rpath,$LLAMA_LIB_DIR -lllama -lggml&quot;
 DYLD_LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; ./simple --model models/tiny_model.gguf</code></pre>
+<p>If needed, set extra runtime variables:</p>
+<p>If backend auto-detection fails in newer llama.cpp builds, set <code>GGML_BACKEND_PATH</code> to a backend shared library file (not a directory), for example:</p>
+<pre><code class="language-sh">export GGML_BACKEND_PATH=&quot;$LLAMA_LIB_DIR/libggml-cpu-haswell.so&quot;</code></pre>
 <details>
-<summary>Build from source (advanced users)</summary>
-<pre><code class="language-bash">git clone https://github.com/ggml-org/llama.cpp.git
+<summary>Advanced setup</summary>
+<p>Build from source:</p>
+<pre><code class="language-sh">git clone https://github.com/ggml-org/llama.cpp.git
 cd llama.cpp
 VERSION=&quot;$(shards version ..)&quot;
 BUILD=&quot;$(echo &quot;$VERSION&quot; | sed -E 's/^0\.([0-9]+)\.0$/\1/')&quot;
@@ -400,6 +395,12 @@ git checkout &quot;${LLAMA_BUILD}&quot;
 mkdir build &amp;&amp; cd build
 cmake .. &amp;&amp; cmake --build . --config Release
 sudo cmake --install . &amp;&amp; sudo ldconfig</code></pre>
+<p>Example for local development/tests:</p>
+<pre><code class="language-sh">MODEL_PATH=/path/to/model.gguf \
+LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; \
+LD_LIBRARY_PATH=&quot;$LLAMA_LIB_DIR&quot; \
+GGML_BACKEND_PATH=&quot;$LLAMA_LIB_DIR/libggml-cpu-haswell.so&quot; \
+crystal spec</code></pre>
 </details>
 <h3><a id="obtaining-gguf-model-files" class="anchor" href="#obtaining-gguf-model-files">
   <svg class="octicon-link" aria-hidden="true">
@@ -413,18 +414,6 @@ sudo cmake --install . &amp;&amp; sudo ldconfig</code></pre>
 <li><a href="https://huggingface.co/mmnga/Meta-Llama-3-70B-Instruct-gguf">Llama 3 8B Instruct</a></li>
 <li><a href="https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF">Mistral 7B Instruct v0.2</a></li>
 </ul>
-<h3><a id="adding-to-your-project" class="anchor" href="#adding-to-your-project">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>Adding to Your Project</h3>
-<p>Add the dependency to your <code>shard.yml</code>:</p>
-<p>We strongly recommend pinning an exact version because llama.cpp updates can include breaking changes between build numbers.</p>
-<pre><code class="language-yaml">dependencies:
-  llama:
-    github: kojix2/llama.cr
-    version: 0.&lt;build&gt;.0</code></pre>
-<p>Then run <code>shards install</code>.</p>
 <h2><a id="usage" class="anchor" href="#usage">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -557,13 +546,13 @@ puts <span class="t">Llama</span>.tokenize_and_format(model.vocab, <span class="
   </svg>
 </a>Core Classes</h3>
 <ul>
-<li><strong>Llama::Model</strong> - Represents a loaded LLaMA model</li>
-<li><strong>Llama::Context</strong> - Handles inference state for a model</li>
-<li><strong>Llama::Vocab</strong> - Provides access to the model's vocabulary</li>
-<li><strong>Llama::Batch</strong> - Manages batches of tokens for efficient processing</li>
-<li><strong>Llama::KvCache</strong> - Controls the key-value cache for optimized inference</li>
-<li><strong>Llama::State</strong> - Handles saving and loading model state</li>
-<li><strong>Llama::SamplerChain</strong> - Combines multiple sampling methods</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Model.html"><strong>Llama::Model</strong></a> - Represents a loaded LLaMA model</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Context.html"><strong>Llama::Context</strong></a> - Handles inference state for a model</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Vocab.html"><strong>Llama::Vocab</strong></a> - Provides access to the model's vocabulary</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Batch.html"><strong>Llama::Batch</strong></a> - Manages batches of tokens for efficient processing</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Memory.html"><strong>Llama::Memory</strong></a> - Controls KV cache memory and related operations</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/State.html"><strong>Llama::State</strong></a> - Handles saving and loading model state</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/SamplerChain.html"><strong>Llama::SamplerChain</strong></a> - Combines multiple sampling methods</li>
 </ul>
 <h3><a id="samplers" class="anchor" href="#samplers">
   <svg class="octicon-link" aria-hidden="true">
@@ -571,14 +560,14 @@ puts <span class="t">Llama</span>.tokenize_and_format(model.vocab, <span class="
   </svg>
 </a>Samplers</h3>
 <ul>
-<li><strong>Llama::Sampler::TopK</strong> - Keeps only the top K most likely tokens</li>
-<li><strong>Llama::Sampler::TopP</strong> - Nucleus sampling (keeps tokens until cumulative probability exceeds P)</li>
-<li><strong>Llama::Sampler::Temp</strong> - Applies temperature to logits</li>
-<li><strong>Llama::Sampler::Dist</strong> - Samples from the final probability distribution</li>
-<li><strong>Llama::Sampler::MinP</strong> - Keeps tokens with probability &gt;= P * max_probability</li>
-<li><strong>Llama::Sampler::Typical</strong> - Selects tokens based on their &quot;typicality&quot; (entropy)</li>
-<li><strong>Llama::Sampler::Mirostat</strong> - Dynamically adjusts sampling to maintain target entropy</li>
-<li><strong>Llama::Sampler::Penalties</strong> - Applies penalties to reduce repetition</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Sampler/TopK.html"><strong>Llama::Sampler::TopK</strong></a> - Keeps only the top K most likely tokens</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Sampler/TopP.html"><strong>Llama::Sampler::TopP</strong></a> - Nucleus sampling (keeps tokens until cumulative probability exceeds P)</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Sampler/Temp.html"><strong>Llama::Sampler::Temp</strong></a> - Applies temperature to logits</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Sampler/Dist.html"><strong>Llama::Sampler::Dist</strong></a> - Samples from the final probability distribution</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Sampler/MinP.html"><strong>Llama::Sampler::MinP</strong></a> - Keeps tokens with probability &gt;= P * max_probability</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Sampler/Typical.html"><strong>Llama::Sampler::Typical</strong></a> - Selects tokens based on their &quot;typicality&quot; (entropy)</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Sampler/Mirostat.html"><strong>Llama::Sampler::Mirostat</strong></a> - Dynamically adjusts sampling to maintain target entropy</li>
+<li><a href="https://kojix2.github.io/llama.cr/Llama/Sampler/Penalties.html"><strong>Llama::Sampler::Penalties</strong></a> - Applies penalties to reduce repetition</li>
 </ul>
 <h2><a id="development" class="anchor" href="#development">
   <svg class="octicon-link" aria-hidden="true">
