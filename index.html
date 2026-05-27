@@ -419,6 +419,17 @@ crystal spec</code></pre>
     <use href="#octicon-link"/>
   </svg>
 </a>Usage</h2>
+<h3><a id="backend-lifetime" class="anchor" href="#backend-lifetime">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Backend Lifetime</h3>
+<p><code>Llama.init</code> is called automatically when a model or context is created, so most
+applications do not need to call it manually.</p>
+<p><code>Llama.uninit</code> is optional and usually not needed. It is intended only for
+controlled teardown after all <code><a href="Llama/Model.html">Llama::Model</a></code> and <code><a href="Llama/Context.html">Llama::Context</a></code> instances have
+been finalized. Calling it while models or contexts are still alive raises an
+error, because their finalizers may still need the llama.cpp backend.</p>
 <h3><a id="basic-text-generation" class="anchor" href="#basic-text-generation">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
