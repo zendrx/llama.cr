@@ -138,9 +138,11 @@ module Llama
       # Free the context handle
       if @handle && !@handle.null?
         LibLlama.llama_free(@handle)
+        @handle = Pointer(LibLlama::LlamaContext).null
       end
 
-      # Clear references to state
+      # Clear references to context-owned wrappers
+      @memory = nil
       @state = nil
     end
 
