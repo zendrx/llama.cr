@@ -511,7 +511,7 @@ context <span class="o">=</span> model.context(embeddings: <span class="n">true<
 <span class="c"># Get embeddings for text</span>
 text <span class="o">=</span> <span class="s">&quot;Hello, world!&quot;</span>
 tokens <span class="o">=</span> model.vocab.tokenize(text)
-batch <span class="o">=</span> <span class="t">Llama</span><span class="t">::</span><span class="t">Batch</span>.get_one(tokens)
+batch <span class="o">=</span> <span class="t">Llama</span><span class="t">::</span><span class="t">Batch</span>.from_tokens(tokens)
 context.decode(batch)
 embeddings <span class="o">=</span> context.get_embeddings_seq(<span class="n">0</span>)
 

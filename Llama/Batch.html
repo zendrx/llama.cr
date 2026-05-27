@@ -355,14 +355,14 @@ Provides methods for managing batches of tokens for efficient processing</p>
   </h2>
   
     
-      <a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L6" target="_blank">
+      <a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L6" target="_blank">
         llama/batch.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch/error.cr#L4" target="_blank">
+      <a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch/error.cr#L4" target="_blank">
         llama/batch/error.cr
       </a>
     
@@ -401,7 +401,7 @@ Provides methods for managing batches of tokens for efficient processing</p>
       <li class="entry-summary">
         <a href="#get_one%28tokens%3AArray%28Int32%29%29%3ABatch-class-method" class="signature"><strong>.get_one</strong>(tokens : Array(Int32)) : Batch</a>
         
-          <div class="summary"><p>Creates a new Batch for a single sequence of tokens</p></div>
+          <div class="summary"><p>Creates a new Batch for a single sequence of tokens.</p></div>
         
       </li>
     
@@ -554,7 +554,7 @@ Provides methods for managing batches of tokens for efficient processing</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L314" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L302" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -591,7 +591,7 @@ Provides methods for managing batches of tokens for efficient processing</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L254" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L242" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -606,7 +606,8 @@ Provides methods for managing batches of tokens for efficient processing</p>
       
         <div class="doc">
           
-          <p>Creates a new Batch for a single sequence of tokens</p>
+          <p>Creates a new Batch for a single sequence of tokens.
+Prefer <code><a href="../Llama/Batch.html#from_tokens%28tokens%3AArray%28Int32%29%2Ccompute_logits_for_last%3ABool%3Dtrue%2Cseq_ids%3AArray%28Int32%29%7CNil%3Dnil%2Cn_seq_max%3AInt32%3D8%29%3ABatch-class-method">.from_tokens</a></code> for new code.</p>
 <p>Parameters:</p>
 <ul>
 <li>tokens: Array of token IDs</li>
@@ -624,7 +625,7 @@ Provides methods for managing batches of tokens for efficient processing</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L73" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L74" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -655,7 +656,7 @@ ameba:disable Metrics/CyclomaticComplexity</li>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L17" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L17" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -678,7 +679,7 @@ The batch created this way is not owned by this wrapper and will not be freed.</
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L52" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L52" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -728,7 +729,7 @@ The batch created this way is not owned by this wrapper and will not be freed.</
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L114" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L103" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -749,7 +750,7 @@ The batch created this way is not owned by this wrapper and will not be freed.</
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L368" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L356" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -770,7 +771,7 @@ The batch created this way is not owned by this wrapper and will not be freed.</
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L98" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L87" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -805,7 +806,7 @@ The batch created this way is not owned by this wrapper and will not be freed.</
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L184" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L173" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -839,7 +840,7 @@ The batch created this way is not owned by this wrapper and will not be freed.</
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L140" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L129" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -860,7 +861,7 @@ The batch created this way is not owned by this wrapper and will not be freed.</
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/ae76dd5af8283e75215452b69614fb522436b2a2/src/llama/batch.cr#L354" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/e6697a1573696dfa15edfa24a6886a6e5026b8d3/src/llama/batch.cr#L342" target="_blank">View source</a>]
         
       </div>
     </div>
