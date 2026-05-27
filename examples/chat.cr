@@ -104,5 +104,3 @@ loop do
 
   messages << Llama::ChatMessage.new("assistant", response)
 end
-
-Llama.uninit

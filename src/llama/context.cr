@@ -27,6 +27,7 @@ module Llama
     )
       # Ensure llama backend is initialized
       Llama.init
+      Llama.register_context
 
       params = LibLlama.llama_context_default_params
 
@@ -45,6 +46,7 @@ module Llama
       @handle = LibLlama.llama_init_from_model(model.to_unsafe, params)
 
       if @handle.null?
+        Llama.unregister_context
         error_msg = Llama.format_error(
           "Failed to create context",
           -4, # Context creation error
@@ -139,6 +141,7 @@ module Llama
       if @handle && !@handle.null?
         LibLlama.llama_free(@handle)
         @handle = Pointer(LibLlama::LlamaContext).null
+        Llama.unregister_context
       end
 
       # Clear references to context-owned wrappers

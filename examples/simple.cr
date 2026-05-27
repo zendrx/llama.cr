@@ -84,5 +84,3 @@ STDERR.puts
 sampler.print_perf
 context.print_perf
 STDERR.puts
-
-Llama.uninit

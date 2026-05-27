@@ -306,5 +306,4 @@ post "/api/chat" do |env|
 end
 
 Kemal.config.port = port
-at_exit { Llama.uninit }
 Kemal.run

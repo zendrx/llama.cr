@@ -19,14 +19,14 @@
 #   want to initialize the backend before any model/context is created.
 #
 # - Llama.uninit: Thread-safe, idempotent finalization of the llama.cpp backend.
-#   Call this if you want to explicitly release all backend resources before program exit.
+#   This is optional and usually not needed. Only call it during controlled
+#   teardown after all Model and Context instances have been finalized.
 #
 # Example:
 #   Llama.init         # (optional, usually not needed)
 #   model = Llama::Model.new("model.gguf")
 #   context = Llama::Context.new(model)
 #   # ... use model/context ...
-#   Llama.uninit       # (optional, usually not needed)
 #
 # The backend is always initialized only once, even if called from multiple threads.
 # All resources are released only once, even if uninit is called multiple times.
@@ -100,6 +100,8 @@ module Llama
   # Mutex for backend initialization/finalization (required for type inference)
   @@backend_mutex : Mutex = Mutex.new
   @@backend_initialized = false
+  @@live_model_count = 0
+  @@live_context_count = 0
 
   # Log level constants (from llama.cpp / ggml)
   LOG_LEVEL_DEBUG   = 0
@@ -316,12 +318,48 @@ module Llama
 
   # Thread-safe, idempotent finalization of the llama.cpp backend.
   # Call this if you want to explicitly release all backend resources before program exit.
+  # All Model and Context instances must be released before calling this method.
   def self.uninit
     @@backend_mutex.synchronize do
       if @@backend_initialized
+        if @@live_model_count > 0 || @@live_context_count > 0
+          raise Error.new(
+            "Cannot uninitialize llama.cpp backend while #{@@live_model_count} model(s) " \
+            "and #{@@live_context_count} context(s) are still alive"
+          )
+        end
+
         LibLlama.llama_backend_free
         @@backend_initialized = false
       end
+    end
+  end
+
+  # :nodoc:
+  def self.register_model
+    @@backend_mutex.synchronize do
+      @@live_model_count += 1
+    end
+  end
+
+  # :nodoc:
+  def self.unregister_model
+    @@backend_mutex.synchronize do
+      @@live_model_count -= 1 if @@live_model_count > 0
+    end
+  end
+
+  # :nodoc:
+  def self.register_context
+    @@backend_mutex.synchronize do
+      @@live_context_count += 1
+    end
+  end
+
+  # :nodoc:
+  def self.unregister_context
+    @@backend_mutex.synchronize do
+      @@live_context_count -= 1 if @@live_context_count > 0
     end
   end
 

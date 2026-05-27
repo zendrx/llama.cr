@@ -23,6 +23,7 @@ module Llama
     )
       # Ensure llama backend is initialized
       Llama.init
+      Llama.register_model
 
       params = LibLlama.llama_model_default_params
       params.n_gpu_layers = n_gpu_layers
@@ -33,6 +34,7 @@ module Llama
       @handle = LibLlama.llama_model_load_from_file(path, params)
 
       if @handle.null?
+        Llama.unregister_model
         error_msg = Llama.format_error(
           "Failed to load model",
           -5, # Model loading error
@@ -192,6 +194,7 @@ module Llama
       if @handle && !@handle.null?
         LibLlama.llama_model_free(@handle)
         @handle = Pointer(LibLlama::LlamaModel).null
+        Llama.unregister_model
       end
     end
 

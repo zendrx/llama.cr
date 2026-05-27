@@ -134,6 +134,16 @@ Popular options:
 
 ## Usage
 
+### Backend Lifetime
+
+`Llama.init` is called automatically when a model or context is created, so most
+applications do not need to call it manually.
+
+`Llama.uninit` is optional and usually not needed. It is intended only for
+controlled teardown after all `Llama::Model` and `Llama::Context` instances have
+been finalized. Calling it while models or contexts are still alive raises an
+error, because their finalizers may still need the llama.cpp backend.
+
 ### Basic Text Generation
 
 ```crystal
