@@ -75,10 +75,17 @@ module Llama
 
     # Frees the resources associated with this sampler chain
     def finalize
-      @samplers.clear if @samplers
       if @handle && !@handle.null?
         LibLlama.llama_sampler_free(@handle)
         @handle = Pointer(LibLlama::LlamaSampler).null
+      end
+
+      if @samplers
+        @samplers.each do |sampler|
+          sampler.set_handle(Pointer(LibLlama::LlamaSampler).null)
+          sampler.set_owned_by_chain(false)
+        end
+        @samplers.clear
       end
     end
 

@@ -104,6 +104,16 @@ describe Llama::SamplerChain do
     end
   end
 
+  it "clears sampler handles after finalizing the chain" do
+    chain = Llama::SamplerChain.new
+    sampler = Llama::Sampler::TopK.new(40)
+
+    chain.add(sampler)
+    chain.finalize
+
+    sampler.to_unsafe.null?.should be_true
+  end
+
   it "can remove samplers from the chain and restore ownership" do
     chain = Llama::SamplerChain.new
     k = Llama::Sampler::TopK.new(40)

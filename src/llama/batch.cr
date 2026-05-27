@@ -131,6 +131,10 @@ module Llama
         raise IndexError.new("Index out of bounds: #{i} (valid range: 0..#{@handle.n_tokens - 1})")
       end
 
+      if @handle.token.null?
+        raise ArgumentError.new("Batch is not token-based")
+      end
+
       # Set the token
       @handle.token[i] = token
 
@@ -173,6 +177,10 @@ module Llama
     def set_embedding(i : Int32, embedding : Array(Float32), pos : Int32? = nil, seq_ids : Array(Int32)? = nil, logits : Bool? = nil)
       if i < 0 || i >= @handle.n_tokens
         raise IndexError.new("Index out of bounds: #{i} (valid range: 0..#{@handle.n_tokens - 1})")
+      end
+
+      if @handle.embd.null?
+        raise ArgumentError.new("Batch is not embedding-based")
       end
 
       if embedding.empty?

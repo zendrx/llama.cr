@@ -85,6 +85,24 @@ describe Llama::Batch do
         batch.set_token(3, 42)
       end
     end
+
+    it "raises an error for embedding batches" do
+      batch = Llama::Batch.new(1, 4)
+
+      expect_raises(ArgumentError, "Batch is not token-based") do
+        batch.set_token(0, 42)
+      end
+    end
+  end
+
+  describe "#set_embedding" do
+    it "raises an error for token batches" do
+      batch = Llama::Batch.new(1)
+
+      expect_raises(ArgumentError, "Batch is not embedding-based") do
+        batch.set_embedding(0, [0.0_f32])
+      end
+    end
   end
 
   it "works with a real model context" do

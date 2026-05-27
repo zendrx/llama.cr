@@ -113,6 +113,7 @@ module Llama
   # Internal variables
   @@log_level = LOG_LEVEL_INFO # Default is INFO
   @@log_box : Pointer(Void)? = nil
+  @@log_callback : Proc(Int32, String, Nil)? = nil
 
   # Set the log level
   #
@@ -155,7 +156,9 @@ module Llama
   #     end
   #   end
   def self.log_set(&block : Int32, String ->)
-    boxed = Box.box(block)
+    callback = block
+    @@log_callback = callback
+    boxed = Box.box(callback)
     @@log_box = boxed
 
     LibLlama.llama_log_set(
