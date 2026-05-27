@@ -80,7 +80,7 @@ require "./llama/sampler"
 module Llama
   VERSION         = {{ `shards version #{__DIR__}`.chomp.stringify }}
   LLAMA_CPP_BUILD = begin
-    if match = VERSION.match(/^0\.(\d+)\.0$/)
+    if match = VERSION.match(/^0\.(\d+)\.\d+$/)
       match[1]
     else
       VERSION

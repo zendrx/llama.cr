@@ -54,7 +54,7 @@ sudo ldconfig
 dependencies:
   llama:
     github: kojix2/llama.cr
-    version: 0.<build>.0
+    version: 0.<build>.<patch>
 ```
 
 Then run:
