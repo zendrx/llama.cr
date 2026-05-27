@@ -249,24 +249,24 @@ See [kojix2.github.io/llama.cr](https://kojix2.github.io/llama.cr) for full API 
 
 ### Core Classes
 
-- [**Llama::Model**](https://kojix2.github.io/llama.cr/Llama/Model.html) - Represents a loaded LLaMA model
-- [**Llama::Context**](https://kojix2.github.io/llama.cr/Llama/Context.html) - Handles inference state for a model
-- [**Llama::Vocab**](https://kojix2.github.io/llama.cr/Llama/Vocab.html) - Provides access to the model's vocabulary
-- [**Llama::Batch**](https://kojix2.github.io/llama.cr/Llama/Batch.html) - Manages batches of tokens for efficient processing
-- [**Llama::Memory**](https://kojix2.github.io/llama.cr/Llama/Memory.html) - Controls KV cache memory and related operations
-- [**Llama::State**](https://kojix2.github.io/llama.cr/Llama/State.html) - Handles saving and loading model state
-- [**Llama::SamplerChain**](https://kojix2.github.io/llama.cr/Llama/SamplerChain.html) - Combines multiple sampling methods
+- [Llama::Model](https://kojix2.github.io/llama.cr/Llama/Model.html) - Represents a loaded LLaMA model
+- [Llama::Context](https://kojix2.github.io/llama.cr/Llama/Context.html) - Handles inference state for a model
+- [Llama::Vocab](https://kojix2.github.io/llama.cr/Llama/Vocab.html) - Provides access to the model's vocabulary
+- [Llama::Batch](https://kojix2.github.io/llama.cr/Llama/Batch.html) - Manages batches of tokens for efficient processing
+- [Llama::Memory](https://kojix2.github.io/llama.cr/Llama/Memory.html) - Controls KV cache memory and related operations
+- [Llama::State](https://kojix2.github.io/llama.cr/Llama/State.html) - Handles saving and loading model state
+- [Llama::SamplerChain](https://kojix2.github.io/llama.cr/Llama/SamplerChain.html) - Combines multiple sampling methods
 
 ### Samplers
 
-- [**Llama::Sampler::TopK**](https://kojix2.github.io/llama.cr/Llama/Sampler/TopK.html) - Keeps only the top K most likely tokens
-- [**Llama::Sampler::TopP**](https://kojix2.github.io/llama.cr/Llama/Sampler/TopP.html) - Nucleus sampling (keeps tokens until cumulative probability exceeds P)
-- [**Llama::Sampler::Temp**](https://kojix2.github.io/llama.cr/Llama/Sampler/Temp.html) - Applies temperature to logits
-- [**Llama::Sampler::Dist**](https://kojix2.github.io/llama.cr/Llama/Sampler/Dist.html) - Samples from the final probability distribution
-- [**Llama::Sampler::MinP**](https://kojix2.github.io/llama.cr/Llama/Sampler/MinP.html) - Keeps tokens with probability >= P \* max_probability
-- [**Llama::Sampler::Typical**](https://kojix2.github.io/llama.cr/Llama/Sampler/Typical.html) - Selects tokens based on their "typicality" (entropy)
-- [**Llama::Sampler::Mirostat**](https://kojix2.github.io/llama.cr/Llama/Sampler/Mirostat.html) - Dynamically adjusts sampling to maintain target entropy
-- [**Llama::Sampler::Penalties**](https://kojix2.github.io/llama.cr/Llama/Sampler/Penalties.html) - Applies penalties to reduce repetition
+- [Llama::Sampler::TopK](https://kojix2.github.io/llama.cr/Llama/Sampler/TopK.html) - Keeps only the top K most likely tokens
+- [Llama::Sampler::TopP](https://kojix2.github.io/llama.cr/Llama/Sampler/TopP.html) - Nucleus sampling (keeps tokens until cumulative probability exceeds P)
+- [Llama::Sampler::Temp](https://kojix2.github.io/llama.cr/Llama/Sampler/Temp.html) - Applies temperature to logits
+- [Llama::Sampler::Dist](https://kojix2.github.io/llama.cr/Llama/Sampler/Dist.html) - Samples from the final probability distribution
+- [Llama::Sampler::MinP](https://kojix2.github.io/llama.cr/Llama/Sampler/MinP.html) - Keeps tokens with probability >= P \* max_probability
+- [Llama::Sampler::Typical](https://kojix2.github.io/llama.cr/Llama/Sampler/Typical.html) - Selects tokens based on their "typicality" (entropy)
+- [Llama::Sampler::Mirostat](https://kojix2.github.io/llama.cr/Llama/Sampler/Mirostat.html) - Dynamically adjusts sampling to maintain target entropy
+- [Llama::Sampler::Penalties](https://kojix2.github.io/llama.cr/Llama/Sampler/Penalties.html) - Applies penalties to reduce repetition
 
 ## Development
 
