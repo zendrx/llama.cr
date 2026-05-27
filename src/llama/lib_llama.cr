@@ -571,7 +571,7 @@ module Llama
     # Define the callback type for logging
     alias GgmlLogCallback = Proc(Int32, LibC::Char*, Void*, Void)
     fun llama_log_set(log_callback : GgmlLogCallback, user_data : Void*) : Void
-    fun llama_batch_get_one(tokens : LlamaToken*, n_tokens : Int32) : LlamaBatch
+    # Omit llama_batch_get_one: deprecated-style helper that borrows token memory.
     fun llama_batch_init(n_tokens : Int32, embd : Int32, n_seq_max : Int32) : LlamaBatch
     fun llama_batch_free(batch : LlamaBatch) : Void
 

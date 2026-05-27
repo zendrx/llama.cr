@@ -39,7 +39,7 @@ describe Llama::State do
       # Process a simple prompt to populate the state
       prompt = "Hello world!"
       tokens = model.vocab.tokenize(prompt)
-      batch = Llama::Batch.get_one(tokens)
+      batch = Llama::Batch.from_tokens(tokens)
       context.decode(batch)
 
       # Get the state size
@@ -55,7 +55,7 @@ describe Llama::State do
       # Process a simple prompt to populate the state
       prompt = "Hello world!"
       tokens = model.vocab.tokenize(prompt)
-      batch = Llama::Batch.get_one(tokens)
+      batch = Llama::Batch.from_tokens(tokens)
       context.decode(batch)
 
       # Get the state data
@@ -89,7 +89,7 @@ describe Llama::State do
       # Process a simple prompt to populate the state
       prompt = "Hello world!"
       tokens = model.vocab.tokenize(prompt)
-      batch = Llama::Batch.get_one(tokens)
+      batch = Llama::Batch.from_tokens(tokens)
       context.decode(batch)
 
       # Save the state to a file
@@ -134,7 +134,7 @@ describe Llama::State do
       # Process a simple prompt to populate the state
       prompt = "Hello world!"
       tokens = model.vocab.tokenize(prompt)
-      batch = Llama::Batch.get_one(tokens)
+      batch = Llama::Batch.from_tokens(tokens)
       context.decode(batch)
 
       # Get the sequence state size
@@ -150,7 +150,7 @@ describe Llama::State do
       # Process a simple prompt to populate the state
       prompt = "Hello world!"
       tokens = model.vocab.tokenize(prompt)
-      batch = Llama::Batch.get_one(tokens)
+      batch = Llama::Batch.from_tokens(tokens)
       context.decode(batch)
 
       # Get the sequence state data
@@ -174,7 +174,7 @@ describe Llama::State do
       # Process a simple prompt to populate the state
       prompt = "Hello world!"
       tokens = model.vocab.tokenize(prompt)
-      batch = Llama::Batch.get_one(tokens)
+      batch = Llama::Batch.from_tokens(tokens)
       context.decode(batch)
 
       # Save the sequence state to a file

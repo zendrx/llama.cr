@@ -61,7 +61,8 @@ def generate(context, vocab, sampler, prompt) : String
     return response
   end
 
-  batch = Llama::Batch.get_one(prompt_tokens)
+  batch = Llama::Batch.from_tokens(prompt_tokens)
+  pos = prompt_tokens.size
   loop do
     n_ctx = context.n_ctx
     if batch.n_tokens > n_ctx
@@ -82,7 +83,9 @@ def generate(context, vocab, sampler, prompt) : String
     STDOUT.flush
     response += piece
 
-    batch = Llama::Batch.get_one([new_token_id])
+    batch = Llama::Batch.from_tokens([new_token_id])
+    batch.to_unsafe.pos[0] = pos
+    pos += 1
   end
   response
 end

@@ -223,7 +223,7 @@ context = model.context(embeddings: true)
 # Get embeddings for text
 text = "Hello, world!"
 tokens = model.vocab.tokenize(text)
-batch = Llama::Batch.get_one(tokens)
+batch = Llama::Batch.from_tokens(tokens)
 context.decode(batch)
 embeddings = context.get_embeddings_seq(0)
 

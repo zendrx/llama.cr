@@ -60,7 +60,8 @@ module Llama
       end
     end
 
-    # Creates a new Batch for a single sequence of tokens
+    # Creates a new Batch for a single sequence of tokens.
+    # Prefer `from_tokens` for new code.
     #
     # Parameters:
     # - tokens: Array of token IDs
@@ -79,19 +80,7 @@ module Llama
         return Batch.new(handle, owned: true)
       end
 
-      tokens_ptr = tokens.to_unsafe
-      handle = LibLlama.llama_batch_get_one(tokens_ptr, tokens.size)
-
-      if handle.n_tokens == 0
-        error_msg = Llama.format_error(
-          "Failed to create batch from tokens",
-          -3, # Batch processing error
-          "tokens size: #{tokens.size}"
-        )
-        raise Batch::Error.new(error_msg)
-      end
-
-      Batch.new(handle, owned: false)
+      from_tokens(tokens)
     end
 
     # Returns the number of tokens in this batch
@@ -221,9 +210,8 @@ module Llama
 
     # Factory methods for common batch creation patterns
 
-    # Crystal implementation of llama_batch_get_one that uses llama_batch_init so
-    # pos, seq_id, and other batch fields are allocated and owned consistently.
-    private def self.crystal_llama_batch_get_one(tokens : Pointer(Int32), n : Int32, n_seq_max : Int32 = 8) : LibLlama::LlamaBatch
+    # Creates an owned batch with token storage copied from the provided pointer.
+    private def self.init_batch_from_tokens(tokens : Pointer(Int32), n : Int32, n_seq_max : Int32 = 8) : LibLlama::LlamaBatch
       batch = LibLlama.llama_batch_init(n, 0, n_seq_max)
 
       if batch.token.null?
@@ -258,7 +246,7 @@ module Llama
 
       begin
         # Use custom function to create a batch with memory allocated
-        handle = crystal_llama_batch_get_one(tokens.to_unsafe, tokens.size, n_seq_max)
+        handle = init_batch_from_tokens(tokens.to_unsafe, tokens.size, n_seq_max)
         batch = Batch.new(handle, owned: true, n_seq_max: n_seq_max)
 
         # Set position, sequence ID, and logits flag for each token

@@ -93,7 +93,7 @@ describe Llama::Batch do
 
     # Create a batch with a simple token sequence
     tokens = model.vocab.tokenize("Hello, world!")
-    batch = Llama::Batch.get_one(tokens)
+    batch = Llama::Batch.from_tokens(tokens)
 
     # Process the batch
     result = context.decode(batch)
