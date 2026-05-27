@@ -22,6 +22,18 @@ describe Llama::Context do
     # No exception means success
   end
 
+  it "rejects a LoRA adapter loaded for another model" do
+    pending! "Test model or adapter file not found" unless File.exists?(ADAPTER_PATH)
+    model = Llama::Model.new(MODEL_PATH)
+    other_model = Llama::Model.new(MODEL_PATH)
+    context = Llama::Context.new(model)
+    adapter = Llama::AdapterLora.new(other_model, ADAPTER_PATH)
+
+    expect_raises(Llama::Context::Error, "LoRA adapter was loaded for a different model") do
+      context.attach_adapter_lora(adapter)
+    end
+  end
+
   it "can apply a dummy control vector" do
     pending! "Test model or adapter file not found" unless File.exists?(ADAPTER_PATH)
     model = Llama::Model.new(MODEL_PATH)

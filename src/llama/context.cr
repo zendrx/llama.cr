@@ -717,6 +717,10 @@ module Llama
     # Raises:
     # - Llama::Context::Error if the adapter cannot be attached
     def attach_adapter_lora(adapter : AdapterLora, scale : Float32 = 1.0) : Int32
+      if adapter.model != @model
+        raise Context::Error.new("LoRA adapter was loaded for a different model")
+      end
+
       existing_index = @adapters_lora.index(adapter)
 
       if existing_index

@@ -44,6 +44,9 @@ module Llama
       @handle
     end
 
+    # Returns the model this adapter was loaded for.
+    getter model : Model
+
     # Frees the resources associated with this adapter
     def finalize
       cleanup
