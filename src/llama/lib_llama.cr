@@ -235,13 +235,17 @@ module Llama
       SAMPLING_MIROSTAT_ETA
     end
 
-    struct LlamaModelKvOverride
-      tag : LlamaModelKvOverrideType
-      key : LibC::Char[128]
+    union LlamaModelKvOverrideValue
       val_i64 : Int64
       val_f64 : Float64
       val_bool : Bool
       val_str : LibC::Char[128]
+    end
+
+    struct LlamaModelKvOverride
+      tag : LlamaModelKvOverrideType
+      key : LibC::Char[128]
+      value : LlamaModelKvOverrideValue
     end
 
     struct LlamaTokenData
