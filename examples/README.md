@@ -25,20 +25,51 @@ sudo ldconfig
 For testing, we recommend using a small model like TinyLlama:
 
 ```bash
-curl -L https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf -o tiny_model.gguf
+curl -L \
+	https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf \
+	-o tiny_model.gguf
 ```
 
 For more models, visit [TheBloke's Hugging Face page](https://huggingface.co/TheBloke).
 
 ## Running the Examples
 
+### Quick Start
+
+Build once:
+
+```bash
+LIBRARY_PATH=/path/to/llama/libs crystal build simple.cr \
+	--link-flags="-L/path/to/llama/libs -Wl,-rpath,/path/to/llama/libs -lllama -lggml"
+```
+
+Run:
+
+```bash
+# Linux
+LD_LIBRARY_PATH=/path/to/llama/libs \
+	./simple --model /path/to/model.gguf "Once upon a time"
+
+# macOS
+DYLD_LIBRARY_PATH=/path/to/llama/libs \
+	./simple --model /path/to/model.gguf "Once upon a time"
+```
+
 ### Simple Text Generation
 
 This example demonstrates how to generate text from a prompt.
 
 ```bash
-LIBRARY_PATH=/path/to/llama/libs crystal build simple.cr --link-flags="-L/path/to/llama/libs -Wl,-rpath,/path/to/llama/libs -lllama -lggml"
-LD_LIBRARY_PATH=/path/to/llama/libs ./simple --model /path/to/model.gguf "Once upon a time"
+LIBRARY_PATH=/path/to/llama/libs crystal build simple.cr \
+	--link-flags="-L/path/to/llama/libs -Wl,-rpath,/path/to/llama/libs -lllama -lggml"
+
+# Linux
+LD_LIBRARY_PATH=/path/to/llama/libs \
+	./simple --model /path/to/model.gguf "Once upon a time"
+
+# macOS
+DYLD_LIBRARY_PATH=/path/to/llama/libs \
+	./simple --model /path/to/model.gguf "Once upon a time"
 ```
 
 ### Chat Example
@@ -46,8 +77,16 @@ LD_LIBRARY_PATH=/path/to/llama/libs ./simple --model /path/to/model.gguf "Once u
 This example demonstrates how to use the chat functionality with chat templates.
 
 ```bash
-LIBRARY_PATH=/path/to/llama/libs crystal build chat.cr --link-flags="-L/path/to/llama/libs -Wl,-rpath,/path/to/llama/libs -lllama -lggml"
-LD_LIBRARY_PATH=/path/to/llama/libs ./chat --model /path/to/model.gguf
+LIBRARY_PATH=/path/to/llama/libs crystal build chat.cr \
+	--link-flags="-L/path/to/llama/libs -Wl,-rpath,/path/to/llama/libs -lllama -lggml"
+
+# Linux
+LD_LIBRARY_PATH=/path/to/llama/libs \
+	./chat --model /path/to/model.gguf
+
+# macOS
+DYLD_LIBRARY_PATH=/path/to/llama/libs \
+	./chat --model /path/to/model.gguf
 ```
 
 ### Tokenization Example
@@ -55,8 +94,16 @@ LD_LIBRARY_PATH=/path/to/llama/libs ./chat --model /path/to/model.gguf
 This example demonstrates how to tokenize text and work with the model's vocabulary.
 
 ```bash
-LIBRARY_PATH=/path/to/llama/libs crystal build tokenize.cr --link-flags="-L/path/to/llama/libs -Wl,-rpath,/path/to/llama/libs -lllama -lggml"
-LD_LIBRARY_PATH=/path/to/llama/libs ./tokenize --model /path/to/model.gguf --prompt "Hello, world!"
+LIBRARY_PATH=/path/to/llama/libs crystal build tokenize.cr \
+	--link-flags="-L/path/to/llama/libs -Wl,-rpath,/path/to/llama/libs -lllama -lggml"
+
+# Linux
+LD_LIBRARY_PATH=/path/to/llama/libs \
+	./tokenize --model /path/to/model.gguf --prompt "Hello, world!"
+
+# macOS
+DYLD_LIBRARY_PATH=/path/to/llama/libs \
+	./tokenize --model /path/to/model.gguf --prompt "Hello, world!"
 ```
 
 ### Web Chat Server
@@ -66,9 +113,20 @@ This example starts a browser-based chat UI.
 ```bash
 cd examples
 shards install
-LIBRARY_PATH=/path/to/llama/libs crystal build server.cr --link-flags="-L/path/to/llama/libs -Wl,-rpath,/path/to/llama/libs -lllama -lggml" -o server
-LD_LIBRARY_PATH=/path/to/llama/libs ./server --model /path/to/model.gguf --port 3000
+LIBRARY_PATH=/path/to/llama/libs crystal build server.cr \
+	--link-flags="-L/path/to/llama/libs -Wl,-rpath,/path/to/llama/libs -lllama -lggml" \
+	-o server
+
+# Linux
+LD_LIBRARY_PATH=/path/to/llama/libs \
+	./server --model /path/to/model.gguf --port 3000
+
+# macOS
+DYLD_LIBRARY_PATH=/path/to/llama/libs \
+	./server --model /path/to/model.gguf --port 3000
 ```
+
+Then open <http://localhost:3000> in your browser.
 
 ## Example List
 
