@@ -51,6 +51,19 @@ describe Llama::Batch do
     end
   end
 
+  describe ".from_tokens" do
+    it "copies tokens into owned batch storage" do
+      tokens = [10, 20, 30]
+      batch = Llama::Batch.from_tokens(tokens)
+      handle = batch.to_unsafe
+
+      handle.n_tokens.should eq(tokens.size)
+      tokens.each_with_index do |token, i|
+        handle.token[i].should eq(token)
+      end
+    end
+  end
+
   describe "#set_token" do
     it "sets a token at the specified index" do
       batch = Llama::Batch.new(5)

@@ -221,20 +221,20 @@ module Llama
 
     # Factory methods for common batch creation patterns
 
-    # Crystal implementation of llama_batch_get_one that properly allocates memory
-    # This is used instead of the C function which doesn't allocate memory for pos, seq_id, etc.
-    private def self.crystal_llama_batch_get_one(tokens : Pointer(Int32), n : Int32, n_seq_max : Int32 = 8) : Tuple(LibLlama::LlamaBatch, Bool)
+    # Crystal implementation of llama_batch_get_one that uses llama_batch_init so
+    # pos, seq_id, and other batch fields are allocated and owned consistently.
+    private def self.crystal_llama_batch_get_one(tokens : Pointer(Int32), n : Int32, n_seq_max : Int32 = 8) : LibLlama::LlamaBatch
       batch = LibLlama.llama_batch_init(n, 0, n_seq_max)
 
-      # Allocate new memory for tokens using C allocator and copy the data
-      new_tokens = Pointer(Int32).new(LibC.malloc(n * sizeof(Int32)).address)
-      new_tokens.copy_from(tokens, n)
+      if batch.token.null?
+        LibLlama.llama_batch_free(batch)
+        raise Batch::Error.new("Failed to allocate batch token storage")
+      end
 
-      batch.token = new_tokens
+      batch.token.copy_from(tokens, n)
       batch.n_tokens = n
 
-      # Return the batch and a flag indicating that it has Crystal-allocated token memory
-      {batch, true}
+      batch
     end
 
     # Creates a batch for a sequence of tokens with optional parameters
@@ -258,11 +258,8 @@ module Llama
 
       begin
         # Use custom function to create a batch with memory allocated
-        handle, has_crystal_token = crystal_llama_batch_get_one(tokens.to_unsafe, tokens.size, n_seq_max)
-        # If has_crystal_token=true then owned: true, otherwise owned: false
-        batch = Batch.new(handle, owned: has_crystal_token)
-        # Set the flag indicating that this batch has Crystal-allocated token memory
-        batch.has_crystal_token = has_crystal_token
+        handle = crystal_llama_batch_get_one(tokens.to_unsafe, tokens.size, n_seq_max)
+        batch = Batch.new(handle, owned: true, n_seq_max: n_seq_max)
 
         # Set position, sequence ID, and logits flag for each token
         tokens.size.times do |i|
@@ -358,11 +355,6 @@ module Llama
       @handle
     end
 
-    # Setter for has_crystal_token
-    def has_crystal_token=(value : Bool)
-      @has_crystal_token = value
-    end
-
     # Explicitly clean up resources
     # This can be called manually to release resources before garbage collection
     private def cleanup
@@ -379,7 +371,6 @@ module Llama
 
     @handle : LibLlama::LlamaBatch
     @owned : Bool
-    @has_crystal_token : Bool = false # Flag to indicate if token memory was allocated by Crystal
 
     # :nodoc:
     def clone
