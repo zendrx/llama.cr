@@ -66,7 +66,7 @@ module Llama
         )
         raise Model::Error.new(error_msg)
       end
-      Vocab.new(vocab_ptr)
+      Vocab.new(vocab_ptr, self)
     end
 
     # Returns the number of parameters in the model

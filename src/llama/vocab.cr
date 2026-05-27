@@ -7,7 +7,7 @@ module Llama
     #
     # Note: This constructor is intended for internal use.
     # Users should obtain Vocab instances through Model#vocab.
-    def initialize(@handle : LibLlama::LlamaVocab*)
+    def initialize(@handle : LibLlama::LlamaVocab*, @model : Model)
     end
 
     # Returns the number of tokens in the vocabulary
@@ -180,5 +180,6 @@ module Llama
     end
 
     @handle : LibLlama::LlamaVocab*
+    @model : Model
   end
 end
