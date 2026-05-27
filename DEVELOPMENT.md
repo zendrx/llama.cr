@@ -59,7 +59,7 @@ This document outlines the development guidelines for the llama.cr project, prim
   - The `finalize` method must call `llama_batch_free` if and only if `owned` is true.
   - Consider providing simplified high-level APIs for common use cases
 
-- **Circular References**: When objects reference each other (e.g., `Context` and `KvCache`):
+- **Circular References**: When objects reference each other (e.g., `Context` and `Memory`):
   - Implement proper cleanup logic in private methods and call them from `finalize`
   - Consider using weak references where appropriate
   - Document the relationship between objects

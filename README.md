@@ -12,14 +12,6 @@ The version in `shard.yml` corresponds to the compatible llama.cpp build number.
 
 This project is under active development and may change rapidly.
 
-## Versioning Policy
-
-- This library version tracks the upstream `llama.cpp` build number.
-- The version in `shard.yml` uses `0.<build>.0` (for example `0.9330.0`).
-- Git tags follow the shard version (for example `v0.9330.0`).
-- Compatibility target is one upstream build at a time.
-- Consumers should pin an exact shard version (for example `0.<build>.0`), not a version range.
-
 ## Features
 
 - Low-level bindings to the llama.cpp C API
@@ -33,11 +25,18 @@ This project is under active development and may change rapidly.
 
 ## Installation
 
-### Prerequisites
+Install `llama.cpp` first, then add this shard.
 
-You need the llama.cpp shared library (libllama) available on your system.
+### 1. Install llama.cpp
 
-#### 1. Download Prebuilt Binary (Recommended)
+macOS (Homebrew)
+
+```sh
+brew install llama.cpp
+export LLAMA_LIB_DIR="$(brew --prefix llama.cpp)/lib"
+```
+
+Linux (prebuilt release matching this shard version)
 
 ```sh
 VERSION="$(shards version)"
@@ -49,52 +48,57 @@ sudo cp llama-${LLAMA_BUILD}/*.so* /usr/local/lib/
 sudo ldconfig
 ```
 
-For macOS, replace `ubuntu-x64` with `macos-arm64` and `*.so` with `*.dylib`.
+### 2. Add to your project
 
-**Alternative: Use local libraries with standard linker flags**
+```yaml
+dependencies:
+  llama:
+    github: kojix2/llama.cr
+    version: 0.<build>.0
+```
 
-If you prefer not to install system-wide, point Crystal and the runtime loader to your local llama.cpp library directory:
+Then run:
 
 ```sh
-export LLAMA_LIB_DIR=/path/to/llama.cpp
-LIBRARY_PATH="$LLAMA_LIB_DIR" crystal build examples/simple.cr --link-flags "-L$LLAMA_LIB_DIR -Wl,-rpath,$LLAMA_LIB_DIR -lllama -lggml"
+shards install
+```
+
+Pin an exact version because llama.cpp updates can include breaking changes between build numbers.
+
+### 3. Build and run
+
+Linux:
+
+```sh
+export LLAMA_LIB_DIR=/path/to/llama.cpp/lib
+LIBRARY_PATH="$LLAMA_LIB_DIR" crystal build examples/simple.cr \
+  --link-flags "-L$LLAMA_LIB_DIR -Wl,-rpath,$LLAMA_LIB_DIR -lllama -lggml"
 LD_LIBRARY_PATH="$LLAMA_LIB_DIR" ./simple --model models/tiny_model.gguf
 ```
 
-On macOS, replace `LD_LIBRARY_PATH` with `DYLD_LIBRARY_PATH`.
+macOS:
 
-If backend auto-detection fails in newer llama.cpp builds, also set `GGML_BACKEND_PATH` to a backend shared library file (not a directory), for example:
+```sh
+export LLAMA_LIB_DIR=/path/to/llama.cpp/lib
+LIBRARY_PATH="$LLAMA_LIB_DIR" crystal build examples/simple.cr \
+  --link-flags "-L$LLAMA_LIB_DIR -Wl,-rpath,$LLAMA_LIB_DIR -lllama -lggml"
+DYLD_LIBRARY_PATH="$LLAMA_LIB_DIR" ./simple --model models/tiny_model.gguf
+```
+
+If needed, set extra runtime variables:
+
+If backend auto-detection fails in newer llama.cpp builds, set `GGML_BACKEND_PATH` to a backend shared library file (not a directory), for example:
 
 ```sh
 export GGML_BACKEND_PATH="$LLAMA_LIB_DIR/libggml-cpu-haswell.so"
 ```
 
-For local development/tests, a full example is:
-
-```sh
-MODEL_PATH=/path/to/model.gguf \
-LIBRARY_PATH="$LLAMA_LIB_DIR" \
-LD_LIBRARY_PATH="$LLAMA_LIB_DIR" \
-GGML_BACKEND_PATH="$LLAMA_LIB_DIR/libggml-cpu-haswell.so" \
-crystal spec
-```
-
-Minimal examples:
-
-```sh
-# Linux
-LIBRARY_PATH="$LLAMA_LIB_DIR" crystal build examples/simple.cr --link-flags "-L$LLAMA_LIB_DIR -Wl,-rpath,$LLAMA_LIB_DIR -lllama -lggml"
-LD_LIBRARY_PATH="$LLAMA_LIB_DIR" ./simple --model models/tiny_model.gguf
-
-# macOS
-LIBRARY_PATH="$LLAMA_LIB_DIR" crystal build examples/simple.cr --link-flags "-L$LLAMA_LIB_DIR -Wl,-rpath,$LLAMA_LIB_DIR -lllama -lggml"
-DYLD_LIBRARY_PATH="$LLAMA_LIB_DIR" ./simple --model models/tiny_model.gguf
-```
-
 <details>
-<summary>Build from source (advanced users)</summary>
+<summary>Advanced setup</summary>
 
-```bash
+Build from source:
+
+```sh
 git clone https://github.com/ggml-org/llama.cpp.git
 cd llama.cpp
 VERSION="$(shards version ..)"
@@ -104,6 +108,16 @@ git checkout "${LLAMA_BUILD}"
 mkdir build && cd build
 cmake .. && cmake --build . --config Release
 sudo cmake --install . && sudo ldconfig
+```
+
+Example for local development/tests:
+
+```sh
+MODEL_PATH=/path/to/model.gguf \
+LIBRARY_PATH="$LLAMA_LIB_DIR" \
+LD_LIBRARY_PATH="$LLAMA_LIB_DIR" \
+GGML_BACKEND_PATH="$LLAMA_LIB_DIR/libggml-cpu-haswell.so" \
+crystal spec
 ```
 
 </details>
@@ -117,21 +131,6 @@ Popular options:
 - [TinyLlama 1.1B](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF) [[raw]](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf)
 - [Llama 3 8B Instruct](https://huggingface.co/mmnga/Meta-Llama-3-70B-Instruct-gguf)
 - [Mistral 7B Instruct v0.2](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF)
-
-### Adding to Your Project
-
-Add the dependency to your `shard.yml`:
-
-We strongly recommend pinning an exact version because llama.cpp updates can include breaking changes between build numbers.
-
-```yaml
-dependencies:
-  llama:
-    github: kojix2/llama.cr
-    version: 0.<build>.0
-```
-
-Then run `shards install`.
 
 ## Usage
 
@@ -250,24 +249,24 @@ See [kojix2.github.io/llama.cr](https://kojix2.github.io/llama.cr) for full API 
 
 ### Core Classes
 
-- **Llama::Model** - Represents a loaded LLaMA model
-- **Llama::Context** - Handles inference state for a model
-- **Llama::Vocab** - Provides access to the model's vocabulary
-- **Llama::Batch** - Manages batches of tokens for efficient processing
-- **Llama::KvCache** - Controls the key-value cache for optimized inference
-- **Llama::State** - Handles saving and loading model state
-- **Llama::SamplerChain** - Combines multiple sampling methods
+- [**Llama::Model**](https://kojix2.github.io/llama.cr/Llama/Model.html) - Represents a loaded LLaMA model
+- [**Llama::Context**](https://kojix2.github.io/llama.cr/Llama/Context.html) - Handles inference state for a model
+- [**Llama::Vocab**](https://kojix2.github.io/llama.cr/Llama/Vocab.html) - Provides access to the model's vocabulary
+- [**Llama::Batch**](https://kojix2.github.io/llama.cr/Llama/Batch.html) - Manages batches of tokens for efficient processing
+- [**Llama::Memory**](https://kojix2.github.io/llama.cr/Llama/Memory.html) - Controls KV cache memory and related operations
+- [**Llama::State**](https://kojix2.github.io/llama.cr/Llama/State.html) - Handles saving and loading model state
+- [**Llama::SamplerChain**](https://kojix2.github.io/llama.cr/Llama/SamplerChain.html) - Combines multiple sampling methods
 
 ### Samplers
 
-- **Llama::Sampler::TopK** - Keeps only the top K most likely tokens
-- **Llama::Sampler::TopP** - Nucleus sampling (keeps tokens until cumulative probability exceeds P)
-- **Llama::Sampler::Temp** - Applies temperature to logits
-- **Llama::Sampler::Dist** - Samples from the final probability distribution
-- **Llama::Sampler::MinP** - Keeps tokens with probability >= P \* max_probability
-- **Llama::Sampler::Typical** - Selects tokens based on their "typicality" (entropy)
-- **Llama::Sampler::Mirostat** - Dynamically adjusts sampling to maintain target entropy
-- **Llama::Sampler::Penalties** - Applies penalties to reduce repetition
+- [**Llama::Sampler::TopK**](https://kojix2.github.io/llama.cr/Llama/Sampler/TopK.html) - Keeps only the top K most likely tokens
+- [**Llama::Sampler::TopP**](https://kojix2.github.io/llama.cr/Llama/Sampler/TopP.html) - Nucleus sampling (keeps tokens until cumulative probability exceeds P)
+- [**Llama::Sampler::Temp**](https://kojix2.github.io/llama.cr/Llama/Sampler/Temp.html) - Applies temperature to logits
+- [**Llama::Sampler::Dist**](https://kojix2.github.io/llama.cr/Llama/Sampler/Dist.html) - Samples from the final probability distribution
+- [**Llama::Sampler::MinP**](https://kojix2.github.io/llama.cr/Llama/Sampler/MinP.html) - Keeps tokens with probability >= P \* max_probability
+- [**Llama::Sampler::Typical**](https://kojix2.github.io/llama.cr/Llama/Sampler/Typical.html) - Selects tokens based on their "typicality" (entropy)
+- [**Llama::Sampler::Mirostat**](https://kojix2.github.io/llama.cr/Llama/Sampler/Mirostat.html) - Dynamically adjusts sampling to maintain target entropy
+- [**Llama::Sampler::Penalties**](https://kojix2.github.io/llama.cr/Llama/Sampler/Penalties.html) - Applies penalties to reduce repetition
 
 ## Development
 
