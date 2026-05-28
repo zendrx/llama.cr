@@ -354,7 +354,7 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L5" target="_blank">
+      <a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L5" target="_blank">
         llama/vocab.cr
       </a>
     
@@ -437,6 +437,13 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#detokenize%28tokens%3AArray%28Int32%29%2Cremove_special%3ABool%3Dtrue%2Cunparse_special%3ABool%3Dfalse%29%3AString-instance-method" class="signature"><strong>#detokenize</strong>(tokens : Array(Int32), remove_special : Bool = <span class="n">true</span>, unparse_special : Bool = <span class="n">false</span>) : String</a>
+        
+          <div class="summary"><p>Converts a token sequence into text.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#eog%3F%28token%3AInt32%29%3ABool-instance-method" class="signature"><strong>#eog?</strong>(token : Int32) : Bool</a>
         
           <div class="summary"><p>Checks if a token is an end-of-generation token</p></div>
@@ -500,16 +507,23 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#token_text%28token%3AInt32%29%3AString-instance-method" class="signature"><strong>#token_text</strong>(token : Int32) : String</a>
+        
+          <div class="summary"><p>Returns the raw vocabulary text entry for a token.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#token_to_piece%28token%3AInt32%2Clstrip%3AInt32%3D0%2Cspecial%3ABool%3Dfalse%29%3AString-instance-method" class="signature"><strong>#token_to_piece</strong>(token : Int32, lstrip : Int32 = <span class="n">0</span>, special : Bool = <span class="n">false</span>) : String</a>
         
-          <div class="summary"><p>Converts a token to a piece of text This is similar to token_to_text but provides more control over the output format</p></div>
+          <div class="summary"><p>Converts a token to a piece of text</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#token_to_text%28token%3AInt32%29%3AString-instance-method" class="signature"><strong>#token_to_text</strong>(token : Int32) : String</a>
         
-          <div class="summary"><p>Returns the text representation of a token</p></div>
+          <div class="summary"><p>Returns the raw vocabulary text entry for a token.</p></div>
         
       </li>
     
@@ -582,7 +596,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L10" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L10" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -619,7 +633,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L121" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L179" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -640,7 +654,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L126" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L184" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -661,7 +675,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L131" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L189" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -682,7 +696,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L138" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L196" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -703,7 +717,30 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L173" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L231" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="detokenize(tokens:Array(Int32),remove_special:Bool=true,unparse_special:Bool=false):String-instance-method">
+      <div class="signature">
+        
+        def <strong>detokenize</strong>(tokens : Array(Int32), remove_special : Bool = <span class="n">true</span>, unparse_special : Bool = <span class="n">false</span>) : String
+
+        <a class="method-permalink" href="#detokenize%28tokens%3AArray%28Int32%29%2Cremove_special%3ABool%3Dtrue%2Cunparse_special%3ABool%3Dfalse%29%3AString-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Converts a token sequence into text.</p>
+<p>This is the inverse of <code><a href="../Llama/Vocab.html#tokenize%28text%3AString%2Cadd_special%3ABool%3Dtrue%2Cparse_special%3ABool%3Dtrue%29%3AArray%28Int32%29-instance-method">#tokenize</a></code> and should be preferred over joining
+token text entries when reconstructing generated output.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L68" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -724,7 +761,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L168" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L226" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -745,7 +782,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L143" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L201" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -766,7 +803,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L148" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L206" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -797,7 +834,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L56" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L114" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -818,7 +855,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L163" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L221" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -839,7 +876,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L14" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L14" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -860,7 +897,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L153" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L211" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -881,7 +918,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L158" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L216" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -902,7 +939,32 @@ Users should obtain Vocab instances through Model#vocab.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L178" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L236" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="token_text(token:Int32):String-instance-method">
+      <div class="signature">
+        
+        def <strong>token_text</strong>(token : Int32) : String
+
+        <a class="method-permalink" href="#token_text%28token%3AInt32%29%3AString-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns the raw vocabulary text entry for a token.</p>
+<p>This is a direct wrapper for <code>llama_vocab_get_text</code>. It is useful for
+inspecting vocabulary entries, but it is not detokenization. Use
+<code><a href="../Llama/Vocab.html#detokenize%28tokens%3AArray%28Int32%29%2Cremove_special%3ABool%3Dtrue%2Cunparse_special%3ABool%3Dfalse%29%3AString-instance-method">#detokenize</a></code> for token sequences and <code><a href="../Llama/Vocab.html#token_to_piece%28token%3AInt32%2Clstrip%3AInt32%3D0%2Cspecial%3ABool%3Dfalse%29%3AString-instance-method">#token_to_piece</a></code> for rendering one
+token as output text.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L24" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -917,8 +979,7 @@ Users should obtain Vocab instances through Model#vocab.</p>
       
         <div class="doc">
           
-          <p>Converts a token to a piece of text
-This is similar to token_to_text but provides more control over the output format</p>
+          <p>Converts a token to a piece of text</p>
 <p>Parameters:</p>
 <ul>
 <li>token: The token to convert</li>
@@ -927,14 +988,14 @@ This is similar to token_to_text but provides more control over the output forma
 </ul>
 <p>Returns:</p>
 <ul>
-<li>The text representation of the token</li>
+<li>The rendered token piece</li>
 </ul>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L34" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L46" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -949,13 +1010,15 @@ This is similar to token_to_text but provides more control over the output forma
       
         <div class="doc">
           
-          <p>Returns the text representation of a token</p>
+          <p>Returns the raw vocabulary text entry for a token.</p>
+<p>Prefer <code><a href="../Llama/Vocab.html#token_text%28token%3AInt32%29%3AString-instance-method">#token_text</a></code> for vocabulary inspection. Prefer <code><a href="../Llama/Vocab.html#detokenize%28tokens%3AArray%28Int32%29%2Cremove_special%3ABool%3Dtrue%2Cunparse_special%3ABool%3Dfalse%29%3AString-instance-method">#detokenize</a></code> or
+<code><a href="../Llama/Vocab.html#token_to_piece%28token%3AInt32%2Clstrip%3AInt32%3D0%2Cspecial%3ABool%3Dfalse%29%3AString-instance-method">#token_to_piece</a></code> when reconstructing model output.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L19" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L33" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -976,7 +1039,7 @@ This is similar to token_to_text but provides more control over the output forma
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/llama.cr/blob/9a866e3419e23f342566bec680f3b636d014d9f7/src/llama/vocab.cr#L70" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/llama.cr/blob/f9812605f0059cf650b950f9cc4f09e2ffce03c3/src/llama/vocab.cr#L128" target="_blank">View source</a>]
         
       </div>
     </div>
