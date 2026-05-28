@@ -229,8 +229,7 @@ module Llama
         raise ArgumentError.new("tokens array cannot be empty")
       end
 
-      batch = Batch.from_tokens(tokens, compute_logits_for_last, seq_ids, n_seq_max)
-      decode(batch)
+      decode_tokens(tokens, compute_logits_for_last, seq_ids, n_seq_max)
     end
 
     # Process multiple prompts in batch
@@ -265,9 +264,7 @@ module Llama
             raise TokenizationError.new(error_msg)
           end
 
-          batch = Batch.from_tokens(tokens, true, nil, 8)
-          result = decode(batch)
-          results << result
+          results << decode_tokens(tokens, true, nil, 8, "Prompt")
         rescue ex : TokenizationError
           raise ex
         rescue ex
@@ -309,33 +306,48 @@ module Llama
     # Parameters:
     # - tokens: Tokens to process
     # - pos_offset: Absolute position of the first token
-    # - logits_for_last: Whether to compute logits for the last token in this batch
+    # - compute_logits_for_last: Whether to compute logits only for the last token
+    # - compute_logits: Whether to compute logits for this batch
     #
     # Returns:
     # - A prepared Batch ready for processing
-    private def token_batch(tokens : Array(Int32), pos_offset : Int32, logits_for_last : Bool = true) : Batch
-      batch = Batch.from_tokens(tokens, true, nil)
+    private def token_batch(
+      tokens : Array(Int32),
+      pos_offset : Int32,
+      compute_logits_for_last : Bool = true,
+      compute_logits : Bool = true,
+      seq_ids : Array(Int32)? = nil,
+      n_seq_max : Int32 = 8,
+    ) : Batch
+      batch = Batch.from_tokens(tokens, compute_logits_for_last, seq_ids, n_seq_max)
 
       tokens.size.times do |i|
         batch.to_unsafe.pos[i] = pos_offset + i
-        batch.to_unsafe.logits[i] = logits_for_last && i == tokens.size - 1 ? 1_i8 : 0_i8
+        needs_logits = compute_logits && (!compute_logits_for_last || i == tokens.size - 1)
+        batch.to_unsafe.logits[i] = needs_logits ? 1_i8 : 0_i8
       end
 
       batch
     end
 
-    # Decodes the prompt in chunks no larger than n_batch.
+    # Decodes tokens in chunks no larger than n_batch.
     #
     # llama_decode rejects batches larger than the context's logical batch size.
-    # Prompt prefill can still be longer than n_batch, so split it while keeping
+    # Prompt prefill can still be longer than n_batch, so split tokens while keeping
     # absolute positions continuous and requesting logits only for the final token.
-    private def decode_prompt(input_tokens : Array(Int32))
+    private def decode_tokens(
+      tokens : Array(Int32),
+      compute_logits_for_last : Bool = true,
+      seq_ids : Array(Int32)? = nil,
+      n_seq_max : Int32 = 8,
+      label : String = "Token sequence",
+    ) : Int32
       context_size = n_ctx.to_i
-      if input_tokens.size > context_size
+      if tokens.size > context_size
         error_msg = Llama.format_error(
-          "Prompt exceeds context size",
+          "#{label} exceeds context size",
           -10, # Invalid parameter error
-          "prompt tokens: #{input_tokens.size}, n_ctx: #{context_size}"
+          "tokens: #{tokens.size}, n_ctx: #{context_size}"
         )
         raise Context::Error.new(error_msg)
       end
@@ -351,13 +363,21 @@ module Llama
       end
 
       offset = 0
-      while offset < input_tokens.size
-        chunk_size = Math.min(batch_size, input_tokens.size - offset)
-        chunk = input_tokens[offset, chunk_size]
-        is_last_chunk = offset + chunk_size == input_tokens.size
-        decode(token_batch(chunk, offset, is_last_chunk))
+      result = 0
+      while offset < tokens.size
+        chunk_size = Math.min(batch_size, tokens.size - offset)
+        chunk = tokens[offset, chunk_size]
+        is_last_chunk = offset + chunk_size == tokens.size
+        compute_chunk_logits = !compute_logits_for_last || is_last_chunk
+        result = decode(token_batch(chunk, offset, compute_logits_for_last, compute_chunk_logits, seq_ids, n_seq_max))
         offset += chunk_size
       end
+      result
+    end
+
+    # Decodes the prompt in chunks no larger than n_batch.
+    private def decode_prompt(input_tokens : Array(Int32)) : Int32
+      decode_tokens(input_tokens, true, nil, 8, "Prompt")
     end
 
     # Prepares a batch for one generated token.
