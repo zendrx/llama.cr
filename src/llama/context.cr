@@ -304,30 +304,65 @@ module Llama
       decode(batch)
     end
 
-    # Prepares a batch for token processing
+    # Creates a token batch with absolute token positions.
     #
     # Parameters:
-    # - all_tokens: Array of all tokens processed so far
-    # - pos: Current position in the token sequence
-    # - input_tokens: Original input tokens from the prompt
+    # - tokens: Tokens to process
+    # - pos_offset: Absolute position of the first token
+    # - logits_for_last: Whether to compute logits for the last token in this batch
     #
     # Returns:
     # - A prepared Batch ready for processing
-    private def prepare_batch(all_tokens : Array(Int32), pos : Int32, input_tokens : Array(Int32)) : Batch
-      if pos == input_tokens.size
-        # For the first iteration, process all input tokens
-        # Create a batch with compute_logits_for_last=true to only compute logits for the last token
-        Batch.from_tokens(input_tokens, true, nil)
-      else
-        # For subsequent tokens, just process the last generated token
-        # Create a single-token batch with the last generated token
-        last_token = all_tokens.last
-        # Use Batch.from_tokens to ensure n_tokens is properly set
-        batch = Batch.from_tokens([last_token], true, [0] of Int32)
-        # Update the position
-        batch.to_unsafe.pos[0] = pos - 1
-        batch
+    private def token_batch(tokens : Array(Int32), pos_offset : Int32, logits_for_last : Bool = true) : Batch
+      batch = Batch.from_tokens(tokens, true, nil)
+
+      tokens.size.times do |i|
+        batch.to_unsafe.pos[i] = pos_offset + i
+        batch.to_unsafe.logits[i] = logits_for_last && i == tokens.size - 1 ? 1_i8 : 0_i8
       end
+
+      batch
+    end
+
+    # Decodes the prompt in chunks no larger than n_batch.
+    #
+    # llama_decode rejects batches larger than the context's logical batch size.
+    # Prompt prefill can still be longer than n_batch, so split it while keeping
+    # absolute positions continuous and requesting logits only for the final token.
+    private def decode_prompt(input_tokens : Array(Int32))
+      context_size = n_ctx.to_i
+      if input_tokens.size > context_size
+        error_msg = Llama.format_error(
+          "Prompt exceeds context size",
+          -10, # Invalid parameter error
+          "prompt tokens: #{input_tokens.size}, n_ctx: #{context_size}"
+        )
+        raise Context::Error.new(error_msg)
+      end
+
+      batch_size = n_batch.to_i
+      if batch_size <= 0
+        error_msg = Llama.format_error(
+          "Invalid batch size",
+          -10, # Invalid parameter error
+          "n_batch: #{batch_size}"
+        )
+        raise Context::Error.new(error_msg)
+      end
+
+      offset = 0
+      while offset < input_tokens.size
+        chunk_size = Math.min(batch_size, input_tokens.size - offset)
+        chunk = input_tokens[offset, chunk_size]
+        is_last_chunk = offset + chunk_size == input_tokens.size
+        decode(token_batch(chunk, offset, is_last_chunk))
+        offset += chunk_size
+      end
+    end
+
+    # Prepares a batch for one generated token.
+    private def generated_token_batch(token : Int32, pos : Int32) : Batch
+      token_batch([token], pos, true)
     end
 
     # Generates text using a sampler chain
@@ -416,6 +451,17 @@ module Llama
     # - Llama::Batch::Error on error
     def decode(batch : LibLlama::LlamaBatch | Batch) : Int32
       batch_ptr = batch.is_a?(Batch) ? batch.to_unsafe : batch
+      batch_size = n_batch.to_i
+
+      if batch_ptr.n_tokens > batch_size
+        error_msg = Llama.format_error(
+          "Batch exceeds n_batch",
+          -3, # Batch processing error
+          "batch size: #{batch_ptr.n_tokens}, n_batch: #{batch_size}"
+        )
+        raise Batch::Error.new(error_msg)
+      end
+
       result = LibLlama.llama_decode(@handle, batch_ptr)
 
       if result < 0
@@ -537,20 +583,19 @@ module Llama
       # Initialize the result string
       result = ""
 
-      # Keep track of all tokens (input + generated)
-      all_tokens = input_tokens.dup
-
       # Current position in the sequence
       pos = input_tokens.size
 
-      # Generate up to max_tokens
-      max_tokens.times do
-        begin
-          # Create a batch with the current tokens
-          batch = prepare_batch(all_tokens, pos, input_tokens)
+      # Process the prompt first. Long prompts are split by n_batch, while
+      # prompts beyond n_ctx are rejected before llama_decode can fail.
+      decode_prompt(input_tokens)
 
-          # Process the batch
-          decode(batch)
+      context_size = n_ctx.to_i
+
+      # Generate up to max_tokens
+      max_tokens.times do |i|
+        begin
+          break if pos >= context_size
 
           # Get the logits for the last token
           logits = self.logits
@@ -566,9 +611,12 @@ module Llama
           token_text = @model.vocab.token_to_text(next_token)
           result += token_text
 
-          # Add the token to our list and increment position
-          all_tokens << next_token
+          token_pos = pos
           pos += 1
+          break if i == max_tokens - 1 || pos >= context_size
+
+          # Process the generated token so the next iteration can sample from it
+          decode(generated_token_batch(next_token, token_pos))
         rescue ex : Batch::Error | TokenizationError
           raise ex
         rescue ex

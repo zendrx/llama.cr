@@ -178,5 +178,38 @@ describe Llama::Context do
         response.should_not be_empty
       end
     end
+
+    it "chunks prompts longer than n_batch" do
+      model = Llama::Model.new(MODEL_PATH)
+      context = model.context(n_ctx: 64_u32, n_batch: 4_u32)
+
+      if context.n_batch >= context.n_ctx
+        puts "  - Skipping chunked prompt test (n_batch >= n_ctx)"
+        next
+      end
+
+      prompt = "hello"
+      while model.vocab.tokenize(prompt).size <= context.n_batch.to_i
+        prompt += " hello"
+      end
+
+      model.vocab.tokenize(prompt).size.should be <= context.n_ctx.to_i
+
+      context.generate(prompt, max_tokens: 1, temperature: 0.0).should be_a(String)
+    end
+
+    it "rejects prompts longer than n_ctx before decoding" do
+      model = Llama::Model.new(MODEL_PATH)
+      context = model.context(n_ctx: 32_u32, n_batch: 8_u32)
+
+      prompt = "hello"
+      while model.vocab.tokenize(prompt).size <= context.n_ctx.to_i
+        prompt += " hello"
+      end
+
+      expect_raises(Llama::Context::Error, /Prompt exceeds context size/) do
+        context.generate(prompt, max_tokens: 1, temperature: 0.0)
+      end
+    end
   end
 end
