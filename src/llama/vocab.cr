@@ -30,6 +30,7 @@ module Llama
     #
     # Prefer `token_text` for vocabulary inspection. Prefer `detokenize` or
     # `token_to_piece` when reconstructing model output.
+    @[Deprecated("Use token_text for vocabulary inspection, token_to_piece for a single rendered token, or detokenize for token sequences.")]
     def token_to_text(token : Int32) : String
       token_text(token)
     end
