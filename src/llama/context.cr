@@ -601,7 +601,7 @@ module Llama
       end
 
       # Initialize the result string
-      result = ""
+      output_tokens = [] of Int32
 
       # Current position in the sequence
       pos = input_tokens.size
@@ -627,9 +627,7 @@ module Llama
           eos_token = @model.vocab.eos
           break if next_token == eos_token
 
-          # Convert the token to text and add to result
-          token_text = @model.vocab.token_to_text(next_token)
-          result += token_text
+          output_tokens << next_token
 
           token_pos = pos
           pos += 1
@@ -649,7 +647,7 @@ module Llama
         end
       end
 
-      result
+      @model.vocab.detokenize(output_tokens)
     end
 
     # Samples a token based on logits and temperature

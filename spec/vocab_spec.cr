@@ -102,8 +102,8 @@ describe Llama::Vocab do
     end
   end
 
-  describe "#token_to_text" do
-    it "converts tokens to text" do
+  describe "#token_text" do
+    it "returns raw vocabulary text entries" do
       model = Llama::Model.new(MODEL_PATH)
       vocab = model.vocab
 
@@ -111,8 +111,8 @@ describe Llama::Vocab do
       text = "Hello, world!"
       tokens = vocab.tokenize(text)
 
-      # Convert each token back to text
-      token_texts = tokens.map { |token| vocab.token_to_text(token) }
+      # Inspect raw vocabulary entries
+      token_texts = tokens.map { |token| vocab.token_text(token) }
 
       # Each token should convert to a non-empty string
       token_texts.each do |token_text|
@@ -131,7 +131,7 @@ describe Llama::Vocab do
 
       special_tokens.each do |token|
         if token >= 0
-          text = vocab.token_to_text(token)
+          text = vocab.token_text(token)
           text.should be_a(String)
           puts "  - Special token #{token} text: '#{text}'"
         end
@@ -139,26 +139,32 @@ describe Llama::Vocab do
     end
   end
 
-  describe "roundtrip conversion" do
+  describe "#detokenize" do
     it "can roundtrip text -> tokens -> text" do
       model = Llama::Model.new(MODEL_PATH)
       vocab = model.vocab
 
       # Simple ASCII text should roundtrip well
       original_text = "Hello, world!"
-      tokens = vocab.tokenize(original_text)
+      tokens = vocab.tokenize(original_text, add_special: false, parse_special: true)
 
-      # Convert tokens back to text
-      reconstructed_text = tokens.map { |token| vocab.token_to_text(token) }.join
+      reconstructed_text = vocab.detokenize(tokens, remove_special: false, unparse_special: false)
 
       puts "  - Original text: '#{original_text}'"
       puts "  - Reconstructed text: '#{reconstructed_text}'"
 
-      # The reconstructed text might not be identical due to tokenization,
-      # but it should contain the essential content
-      reconstructed_text.downcase.gsub(/[^a-z]/, "").should contain(
-        original_text.downcase.gsub(/[^a-z]/, "")
-      )
+      reconstructed_text.should eq(original_text)
+    end
+
+    it "detokenizes multilingual text, emoji, and spaces" do
+      model = Llama::Model.new(MODEL_PATH)
+      vocab = model.vocab
+
+      original_text = "Hello  こんにちは 👋\n  world"
+      tokens = vocab.tokenize(original_text, add_special: false, parse_special: true)
+      reconstructed_text = vocab.detokenize(tokens, remove_special: false, unparse_special: false)
+
+      reconstructed_text.should eq(original_text)
     end
   end
 end

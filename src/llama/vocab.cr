@@ -15,14 +15,26 @@ module Llama
       LibLlama.llama_vocab_n_tokens(@handle)
     end
 
-    # Returns the text representation of a token
-    def token_to_text(token : Int32) : String
+    # Returns the raw vocabulary text entry for a token.
+    #
+    # This is a direct wrapper for `llama_vocab_get_text`. It is useful for
+    # inspecting vocabulary entries, but it is not detokenization. Use
+    # `detokenize` for token sequences and `token_to_piece` for rendering one
+    # token as output text.
+    def token_text(token : Int32) : String
       ptr = LibLlama.llama_vocab_get_text(@handle, token)
       String.new(ptr)
     end
 
+    # Returns the raw vocabulary text entry for a token.
+    #
+    # Prefer `token_text` for vocabulary inspection. Prefer `detokenize` or
+    # `token_to_piece` when reconstructing model output.
+    def token_to_text(token : Int32) : String
+      token_text(token)
+    end
+
     # Converts a token to a piece of text
-    # This is similar to token_to_text but provides more control over the output format
     #
     # Parameters:
     # - token: The token to convert
@@ -30,18 +42,64 @@ module Llama
     # - special: Whether to render special tokens
     #
     # Returns:
-    # - The text representation of the token
+    # - The rendered token piece
     def token_to_piece(token : Int32, lstrip : Int32 = 0, special : Bool = false) : String
       buf_size = 128
       buf = Pointer(LibC::Char).malloc(buf_size)
 
       n = LibLlama.llama_token_to_piece(@handle, token, buf, buf_size, lstrip, special)
+      if n < 0
+        buf_size = -n
+        buf = Pointer(LibC::Char).malloc(buf_size)
+        n = LibLlama.llama_token_to_piece(@handle, token, buf, buf_size, lstrip, special)
+      end
 
       if n < 0
         raise Error.new("Failed to convert token to piece")
       end
 
       String.new(buf, n)
+    end
+
+    # Converts a token sequence into text.
+    #
+    # This is the inverse of `tokenize` and should be preferred over joining
+    # token text entries when reconstructing generated output.
+    def detokenize(tokens : Array(Int32), remove_special : Bool = true, unparse_special : Bool = false) : String
+      return "" if tokens.empty?
+
+      text_len = tokens.size * 16 + 16
+      text = Pointer(LibC::Char).malloc(text_len)
+
+      n = LibLlama.llama_detokenize(
+        @handle,
+        tokens.to_unsafe,
+        tokens.size,
+        text,
+        text_len,
+        remove_special,
+        unparse_special
+      )
+
+      if n < 0
+        text_len = -n
+        text = Pointer(LibC::Char).malloc(text_len)
+        n = LibLlama.llama_detokenize(
+          @handle,
+          tokens.to_unsafe,
+          tokens.size,
+          text,
+          text_len,
+          remove_special,
+          unparse_special
+        )
+      end
+
+      if n < 0
+        raise Error.new("Failed to detokenize tokens")
+      end
+
+      String.new(text, n)
     end
 
     # Format a token for display
