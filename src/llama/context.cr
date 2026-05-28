@@ -54,9 +54,6 @@ module Llama
       @model = model
       @adapters_lora = [] of AdapterLora
       @adapter_lora_scales = [] of Float32
-
-      # Lazy initialization for state to avoid circular references
-      @state = nil
     end
 
     private def sync_adapters_lora! : Int32
@@ -86,7 +83,7 @@ module Llama
     # Returns:
     # - A Memory instance
     def memory : Memory
-      @memory ||= Memory.new(self)
+      Memory.new(self)
     end
 
     # Returns the context window size (n_ctx)
@@ -125,9 +122,8 @@ module Llama
     end
 
     # Returns the state manager for this context
-    # Lazily initializes the state if it doesn't exist yet
     def state : State
-      @state ||= State.new(self)
+      State.new(self)
     end
 
     # Explicitly clean up resources
@@ -139,10 +135,6 @@ module Llama
         @handle = Pointer(LibLlama::LlamaContext).null
         Llama.unregister_context
       end
-
-      # Clear references to context-owned wrappers
-      @memory = nil
-      @state = nil
     end
 
     # Generates a response in a chat conversation
@@ -984,8 +976,6 @@ module Llama
 
     @handle : LibLlama::LlamaContext*
     @model : Model
-    @memory : Memory?
-    @state : State?
 
     # :nodoc:
     def clone

@@ -542,12 +542,6 @@ module Llama
       end
     end
 
-    # Frees the resources associated with this state
-    def finalize
-      # Just nullify our references
-      @ctx_ptr = Pointer(LibLlama::LlamaContext).null
-    end
-
     @ctx_ptr : LibLlama::LlamaContext*
     @ctx : Context
 
