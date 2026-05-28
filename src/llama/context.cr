@@ -606,6 +606,10 @@ module Llama
       # Current position in the sequence
       pos = input_tokens.size
 
+      # High-level generation starts a fresh sequence. Stateful continuation is
+      # available through the lower-level decode/process_tokens APIs.
+      memory.clear
+
       # Process the prompt first. Long prompts are split by n_batch, while
       # prompts beyond n_ctx are rejected before llama_decode can fail.
       decode_prompt(input_tokens)

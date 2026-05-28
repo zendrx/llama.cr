@@ -199,6 +199,22 @@ describe Llama::Context do
       values.should eq(before)
     end
 
+    it "starts each generate call with clear memory" do
+      model = Llama::Model.new(MODEL_PATH)
+      context = model.context
+
+      long_prompt = "one two three four five six seven eight nine ten"
+      long_tokens = model.vocab.tokenize(long_prompt)
+      context.decode(Llama::Batch.from_tokens(long_tokens, true))
+      context.memory.seq_pos_max(0).should be >= long_tokens.size - 1
+
+      short_prompt = "Hi"
+      short_tokens = model.vocab.tokenize(short_prompt)
+      context.generate(short_prompt, max_tokens: 1, temperature: 0.0)
+
+      context.memory.seq_pos_max(0).should be <= short_tokens.size - 1
+    end
+
     it "chunks prompts longer than n_batch" do
       model = Llama::Model.new(MODEL_PATH)
       context = model.context(n_ctx: 64_u32, n_batch: 4_u32)
