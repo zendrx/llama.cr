@@ -7,7 +7,7 @@ module Llama
     #
     # Parameters:
     # - model: The Model to create a context for.
-    # - n_ctx: Text context (default: 0). The maximum context size. If 0, a minimum context size of 512 is used.
+    # - n_ctx: Text context (default: 0). The maximum context size. If 0, uses the model default.
     # - n_batch: Logical maximum batch size that can be submitted to llama_decode (default: 512).
     # - n_threads: Number of threads to use for generation (default: 0). If 0, uses the number of hardware threads.
     # - n_threads_batch: Number of threads to use for batch processing (default: 0). If 0, uses the number of hardware threads.
@@ -18,7 +18,7 @@ module Llama
     # - Llama::Context::Error if the context cannot be created.
     def initialize(
       model : Model,
-      n_ctx : UInt32 = 0,          # The maximum context size (0 = use minimum of 512)
+      n_ctx : UInt32 = 0,          # The maximum context size (0 = use model default)
       n_batch : UInt32 = 512,      # The maximum batch size
       n_threads : Int32 = 0,       # Number of threads for generation
       n_threads_batch : Int32 = 0, # Number of threads for batch processing
@@ -31,11 +31,7 @@ module Llama
 
       params = LibLlama.llama_context_default_params
 
-      # Ensure a minimum context size of 512 when n_ctx is 0
-      # This helps with vocab_only models where the default context size might not be available
-      actual_n_ctx = n_ctx == 0 ? 512_u32 : n_ctx
-
-      params.n_ctx = actual_n_ctx
+      params.n_ctx = n_ctx
       params.n_batch = n_batch
       params.n_threads = n_threads
       params.n_threads_batch = n_threads_batch
@@ -50,7 +46,7 @@ module Llama
         error_msg = Llama.format_error(
           "Failed to create context",
           -4, # Context creation error
-          "n_ctx: #{actual_n_ctx}, n_batch: #{n_batch}, n_threads: #{n_threads}, n_threads_batch: #{n_threads_batch}, embeddings: #{embeddings}, offload_kqv: #{offload_kqv}"
+          "n_ctx: #{n_ctx}, n_batch: #{n_batch}, n_threads: #{n_threads}, n_threads_batch: #{n_threads_batch}, embeddings: #{embeddings}, offload_kqv: #{offload_kqv}"
         )
         raise Context::Error.new(error_msg)
       end
