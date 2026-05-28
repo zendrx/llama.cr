@@ -248,4 +248,22 @@ describe Llama::Context do
       end
     end
   end
+
+  describe "#process_prompts" do
+    it "clears memory before each prompt" do
+      model = Llama::Model.new(MODEL_PATH)
+      context = model.context
+
+      long_prompt = "one two three four five six seven eight nine ten"
+      long_tokens = model.vocab.tokenize(long_prompt)
+      context.decode(Llama::Batch.from_tokens(long_tokens, true))
+      context.memory.seq_pos_max(0).should be >= long_tokens.size - 1
+
+      short_prompt = "Hi"
+      short_tokens = model.vocab.tokenize(short_prompt)
+      context.process_prompts([short_prompt])
+
+      context.memory.seq_pos_max(0).should be <= short_tokens.size - 1
+    end
+  end
 end

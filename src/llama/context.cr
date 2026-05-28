@@ -260,6 +260,7 @@ module Llama
             raise Llama::TokenizationError.new(error_msg)
           end
 
+          memory.clear
           results << decode_tokens(tokens, true, nil, 8, "Prompt")
         rescue ex : Llama::TokenizationError
           raise ex
