@@ -619,7 +619,7 @@ module Llama
       # Generate up to max_tokens
       max_tokens.times do |i|
         begin
-          break if pos >= context_size
+          break if pos > context_size
 
           # Get the logits for the last token
           logits = self.logits
@@ -635,7 +635,7 @@ module Llama
 
           token_pos = pos
           pos += 1
-          break if i == max_tokens - 1 || pos >= context_size
+          break if i == max_tokens - 1 || token_pos >= context_size
 
           # Process the generated token so the next iteration can sample from it
           decode(generated_token_batch(next_token, token_pos))
