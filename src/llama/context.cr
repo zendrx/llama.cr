@@ -261,11 +261,11 @@ module Llama
               -6, # Tokenization error
               "prompt index: #{i}"
             )
-            raise TokenizationError.new(error_msg)
+            raise Llama::TokenizationError.new(error_msg)
           end
 
           results << decode_tokens(tokens, true, nil, 8, "Prompt")
-        rescue ex : TokenizationError
+        rescue ex : Llama::TokenizationError
           raise ex
         rescue ex
           error_msg = Llama.format_error(
@@ -587,7 +587,7 @@ module Llama
           -6, # Tokenization error
           ex.message
         )
-        raise Sampler::TokenizationError.new(error_msg)
+        raise Llama::TokenizationError.new(error_msg)
       end
 
       # Ensure input tokens are not empty
@@ -597,7 +597,7 @@ module Llama
           -6, # Tokenization error
           "prompt length: #{prompt.size}"
         )
-        raise Sampler::TokenizationError.new(error_msg)
+        raise Llama::TokenizationError.new(error_msg)
       end
 
       # Initialize the result string
@@ -639,7 +639,7 @@ module Llama
 
           # Process the generated token so the next iteration can sample from it
           decode(generated_token_batch(next_token, token_pos))
-        rescue ex : Batch::Error | TokenizationError
+        rescue ex : Batch::Error | Llama::TokenizationError
           raise ex
         rescue ex
           error_msg = Llama.format_error(
