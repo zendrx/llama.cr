@@ -73,11 +73,7 @@ module Llama
     # - Llama::Batch::Error if the batch cannot be created
     def self.get_one(tokens : Array(Int32)) : Batch
       if tokens.empty?
-        # For empty token arrays, create a special batch with n_tokens=0
-        # We can't use the normal constructor because it requires n_tokens > 0
-        handle = LibLlama::LlamaBatch.new
-        handle.n_tokens = 0
-        return Batch.new(handle, owned: true)
+        raise ArgumentError.new("Tokens array cannot be empty")
       end
 
       from_tokens(tokens)
@@ -144,11 +140,18 @@ module Llama
       # Set the sequence IDs
       if seq_ids.nil? || seq_ids.empty?
         @handle.n_seq_id[i] = 1
+        if @handle.seq_id[i].null?
+          raise Batch::Error.new("Sequence ID pointer is null at index #{i}")
+        end
         @handle.seq_id[i][0] = 0
       else
         # Limit the number of sequence IDs to n_seq_max
         num_seq_ids = Math.min(seq_ids.size, @n_seq_max)
         @handle.n_seq_id[i] = num_seq_ids
+
+        if @handle.seq_id[i].null?
+          raise Batch::Error.new("Sequence ID pointer is null at index #{i}")
+        end
 
         num_seq_ids.times do |j|
           @handle.seq_id[i][j] = seq_ids[j]
@@ -199,11 +202,18 @@ module Llama
       # Set the sequence IDs
       if seq_ids.nil? || seq_ids.empty?
         @handle.n_seq_id[i] = 1
+        if @handle.seq_id[i].null?
+          raise Batch::Error.new("Sequence ID pointer is null at index #{i}")
+        end
         @handle.seq_id[i][0] = 0
       else
         # Limit the number of sequence IDs to n_seq_max
         num_seq_ids = Math.min(seq_ids.size, @n_seq_max)
         @handle.n_seq_id[i] = num_seq_ids
+
+        if @handle.seq_id[i].null?
+          raise Batch::Error.new("Sequence ID pointer is null at index #{i}")
+        end
 
         num_seq_ids.times do |j|
           @handle.seq_id[i][j] = seq_ids[j]
@@ -265,11 +275,18 @@ module Llama
           # Set the sequence IDs
           if seq_ids.nil? || seq_ids.empty?
             batch.to_unsafe.n_seq_id[i] = 1
+            if batch.to_unsafe.seq_id[i].null?
+              raise Batch::Error.new("Sequence ID pointer is null at index #{i}")
+            end
             batch.to_unsafe.seq_id[i][0] = 0
           else
             # Limit the number of sequence IDs to n_seq_max
             num_seq_ids = Math.min(seq_ids.size, n_seq_max)
             batch.to_unsafe.n_seq_id[i] = num_seq_ids
+
+            if batch.to_unsafe.seq_id[i].null?
+              raise Batch::Error.new("Sequence ID pointer is null at index #{i}")
+            end
 
             num_seq_ids.times do |j|
               batch.to_unsafe.seq_id[i][j] = seq_ids[j]

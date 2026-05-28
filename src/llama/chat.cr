@@ -61,21 +61,25 @@ module Llama
 
     # Second call: allocate buffer and get the result
     buffer = Pointer(LibC::Char).malloc(required_size)
-    written = LibLlama.llama_chat_apply_template(
-      tmpl.to_unsafe,
-      c_messages.to_unsafe,
-      messages.size,
-      add_assistant,
-      buffer,
-      required_size
-    )
+    begin
+      written = LibLlama.llama_chat_apply_template(
+        tmpl.to_unsafe,
+        c_messages.to_unsafe,
+        messages.size,
+        add_assistant,
+        buffer,
+        required_size
+      )
 
-    # Check for errors
-    raise Error.new("Failed to apply chat template") if written < 0
-    raise Error.new("Chat template output exceeded allocated buffer") if written > required_size
+      # Check for errors
+      raise Error.new("Failed to apply chat template") if written < 0
+      raise Error.new("Chat template output exceeded allocated buffer") if written > required_size
 
-    # Convert result to string
-    String.new(buffer, written)
+      # Convert result to string
+      String.new(buffer, written)
+    ensure
+      LibC.free(buffer)
+    end
   end
 
   # Gets the list of built-in chat templates
@@ -83,15 +87,27 @@ module Llama
   # Returns:
   # - Array of template names
   def self.builtin_chat_templates : Array(String)
-    # Assume maximum of 100 templates
-    output = Pointer(LibC::Char*).malloc(100)
-    count = LibLlama.llama_chat_builtin_templates(output, 100)
+    capacity = 100
+    output = Pointer(LibC::Char*).malloc(capacity)
 
-    result = [] of String
-    count.times do |i|
-      result << String.new(output[i])
+    begin
+      count = LibLlama.llama_chat_builtin_templates(output, capacity)
+
+      if count > capacity
+        LibC.free(output)
+        capacity = count
+        output = Pointer(LibC::Char*).malloc(capacity)
+        count = LibLlama.llama_chat_builtin_templates(output, capacity)
+      end
+
+      result = [] of String
+      count.times do |i|
+        result << String.new(output[i])
+      end
+
+      result
+    ensure
+      LibC.free(output)
     end
-
-    result
   end
 end

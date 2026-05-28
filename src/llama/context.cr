@@ -464,14 +464,7 @@ module Llama
       batch_ptr = batch.is_a?(Batch) ? batch.to_unsafe : batch
       batch_size = n_batch.to_i
 
-      if batch_ptr.n_tokens > batch_size
-        error_msg = Llama.format_error(
-          "Batch exceeds n_batch",
-          -3, # Batch processing error
-          "batch size: #{batch_ptr.n_tokens}, n_batch: #{batch_size}"
-        )
-        raise Batch::Error.new(error_msg)
-      end
+      validate_batch_for_decode!(batch_ptr, batch_size, n_ctx.to_i)
 
       result = LibLlama.llama_decode(@handle, batch_ptr)
 
@@ -485,6 +478,89 @@ module Llama
       end
 
       result
+    end
+
+    private def validate_batch_for_decode!(batch : LibLlama::LlamaBatch, batch_size : Int32, context_size : Int32) : Nil
+      if batch.n_tokens <= 0
+        error_msg = Llama.format_error(
+          "Cannot decode empty batch",
+          -3,
+          "n_tokens: #{batch.n_tokens}"
+        )
+        raise Batch::Error.new(error_msg)
+      end
+
+      if batch.n_tokens > batch_size
+        error_msg = Llama.format_error(
+          "Batch exceeds n_batch",
+          -3, # Batch processing error
+          "batch size: #{batch.n_tokens}, n_batch: #{batch_size}"
+        )
+        raise Batch::Error.new(error_msg)
+      end
+
+      unless batch.pos.null?
+        batch.n_tokens.times do |i|
+          pos = batch.pos[i]
+          if pos < 0 || pos >= context_size
+            error_msg = Llama.format_error(
+              "Token position out of bounds",
+              -10,
+              "position #{pos} at index #{i}, n_ctx: #{context_size}"
+            )
+            raise Batch::Error.new(error_msg)
+          end
+        end
+      end
+
+      if !batch.n_seq_id.null? && !batch.seq_id.null?
+        batch.n_tokens.times do |i|
+          n_seq = batch.n_seq_id[i]
+          if n_seq <= 0
+            error_msg = Llama.format_error(
+              "Invalid sequence ID count",
+              -10,
+              "n_seq_id[#{i}] = #{n_seq}"
+            )
+            raise Batch::Error.new(error_msg)
+          end
+
+          if batch.seq_id[i].null?
+            error_msg = Llama.format_error(
+              "Null sequence ID pointer",
+              -10,
+              "seq_id[#{i}] is null"
+            )
+            raise Batch::Error.new(error_msg)
+          end
+
+          n_seq.times do |j|
+            seq_id = batch.seq_id[i][j]
+            if seq_id < 0
+              error_msg = Llama.format_error(
+                "Invalid sequence ID",
+                -10,
+                "seq_id[#{i}][#{j}] = #{seq_id}"
+              )
+              raise Batch::Error.new(error_msg)
+            end
+          end
+        end
+      end
+
+      unless batch.logits.null?
+        batch.n_tokens.times do |i|
+          logits = batch.logits[i]
+          next if logits == 0 || logits == 1
+
+          error_msg = Llama.format_error(
+            "Invalid logits flag",
+            -10,
+            "logits[#{i}] = #{logits}"
+          )
+          raise Batch::Error.new(error_msg)
+        end
+      end
     end
 
     # Gets the logits for a specific output index.
