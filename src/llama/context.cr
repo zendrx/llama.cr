@@ -402,6 +402,8 @@ module Llama
         raise ArgumentError.new("max_tokens must be positive")
       end
 
+      sampler.reset
+
       # Use the internal generation method with a custom token sampler
       generate_internal(prompt, max_tokens) do |_logits|
         begin
