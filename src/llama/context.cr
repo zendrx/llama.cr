@@ -691,24 +691,21 @@ module Llama
         return best_token
       end
 
-      # Temperature sampling
-      # Apply temperature to logits
       n_vocab = @model.vocab.n_tokens
       probs = Array(Float32).new(n_vocab, 0.0)
 
-      # Apply temperature and convert to probabilities
+      # Apply temperature without mutating the context-owned logits buffer.
       max_logit = -Float32::INFINITY
       n_vocab.times do |i|
-        logits[i] /= temperature
-        if logits[i] > max_logit
-          max_logit = logits[i]
-        end
+        scaled_logit = logits[i] / temperature
+        max_logit = scaled_logit if scaled_logit > max_logit
       end
 
       # Compute softmax
       sum = 0.0_f32
       n_vocab.times do |i|
-        probs[i] = Math.exp(logits[i] - max_logit)
+        scaled_logit = logits[i] / temperature
+        probs[i] = Math.exp(scaled_logit - max_logit)
         sum += probs[i]
       end
 
