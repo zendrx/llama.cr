@@ -75,6 +75,16 @@ describe Llama::Batch do
       batch.set_token(4, 46, 4, [1, 2, 3] of Int32, false)
     end
 
+    it "sets logits to false explicitly" do
+      batch = Llama::Batch.new(1)
+
+      batch.set_token(0, 42, logits: true)
+      batch.to_unsafe.logits[0].should eq(1_i8)
+
+      batch.set_token(0, 42, logits: false)
+      batch.to_unsafe.logits[0].should eq(0_i8)
+    end
+
     it "raises an error with invalid index" do
       batch = Llama::Batch.new(3)
       expect_raises(IndexError) do
@@ -96,6 +106,16 @@ describe Llama::Batch do
   end
 
   describe "#set_embedding" do
+    it "sets logits to false explicitly" do
+      batch = Llama::Batch.new(1, 4)
+
+      batch.set_embedding(0, [0.0_f32, 1.0_f32, 2.0_f32, 3.0_f32], logits: true)
+      batch.to_unsafe.logits[0].should eq(1_i8)
+
+      batch.set_embedding(0, [0.0_f32, 1.0_f32, 2.0_f32, 3.0_f32], logits: false)
+      batch.to_unsafe.logits[0].should eq(0_i8)
+    end
+
     it "raises an error for token batches" do
       batch = Llama::Batch.new(1)
 

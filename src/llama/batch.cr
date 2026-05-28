@@ -156,7 +156,7 @@ module Llama
       end
 
       # Set the logits flag if provided
-      if logits
+      unless logits.nil?
         @handle.logits[i] = logits ? 1_i8 : 0_i8
       end
     end
@@ -211,7 +211,7 @@ module Llama
       end
 
       # Set the logits flag if provided
-      if logits
+      unless logits.nil?
         @handle.logits[i] = logits ? 1_i8 : 0_i8
       end
     end
