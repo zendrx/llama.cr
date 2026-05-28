@@ -68,15 +68,14 @@ sampler = Llama::SamplerChain.new(no_perf: false)
 # Add a greedy sampler to the chain
 sampler.add(Llama::Sampler::Greedy.new)
 
-t_start = Time.monotonic
-print prompt
-response = context.generate_with_sampler(prompt, sampler, n_predict)
-print response
+elapsed = Time.measure do
+  print prompt
+  response = context.generate_with_sampler(prompt, sampler, n_predict)
+  print response
+end
 n_decode = n_predict
 
 puts
-
-elapsed = Time.monotonic - t_start
 
 STDERR.puts "Decoded #{n_decode} tokens in #{elapsed.total_seconds.round(2)} s, speed: #{(n_decode / elapsed.total_seconds).round(2)} t/s"
 
