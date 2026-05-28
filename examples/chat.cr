@@ -76,7 +76,7 @@ def generate(context, vocab, sampler, prompt) : String
     end
 
     new_token_id = sampler.sample(context)
-    break if vocab.eog?(new_token_id) || new_token_id == vocab.eos || new_token_id == vocab.eot
+    break if vocab.eog?(new_token_id)
 
     piece = vocab.token_to_piece(new_token_id, 0, true)
     print piece

@@ -625,9 +625,8 @@ module Llama
           # Sample the next token using the provided sampler
           next_token = token_sampler.call(logits)
 
-          # Check for end of generation (EOS token)
-          eos_token = @model.vocab.eos
-          break if next_token == eos_token
+          # Check for end-of-generation tokens such as EOS or EOT.
+          break if @model.vocab.eog?(next_token)
 
           output_tokens << next_token
 
